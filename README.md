@@ -14,3 +14,5 @@
   - arvosanan mukaan
 - Muiden kommentteja voi myös arvostella tyyliin peukku ylös/alas.
 
+- Admin voi kaiken edellä mainitun lisäksi poistaa käyttäjän tai yksittäisen reseptin/kommentin.
+
