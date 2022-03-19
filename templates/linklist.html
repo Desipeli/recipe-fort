@@ -4,6 +4,16 @@
         <title>Recipe Fort</title>
     </head>
     <body>
+        {% if session.username %}
+        <p>Logged in as {{ session.username }} <a href="/logout">Log out</a></p> 
+        {% else %}
+        <p>{{ login_error }}</p>
+        <form action="/login" method="POST">
+            <p>Username: <input type="text" name="username"></p>
+            <p>Password:  <input type="password" name="password"></p>
+            <input type="submit" value="Log in">
+        </form>
+        {% endif %}
         <h3>{{ list_header }}</h3>
         <br>
         <ul>
