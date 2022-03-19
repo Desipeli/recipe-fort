@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Recipe Fort</title>
+    </head>
+    <body>
+        <h2>{{ recipe_name }}</h2>
+        <h3>Ingredients</h3>
+        <br>
+        <ul>
+            {% for element in ingredients %}
+            <li> {{ element[0] }} {{ element[1] }}
+            {% endfor %}
+        </ul>
+        <h3>Instructions</h3>
+        <br>
+        <p>{{ instructions[0][2] }}</p>
+    </body>
+</html>

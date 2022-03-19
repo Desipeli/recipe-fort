@@ -24,3 +24,20 @@ def login():
 def logout():
     del session["username"]
     return redirect("/")
+
+@app.route("/users")
+def users():
+    result = db.session.execute("SELECT username FROM Users ORDER BY username").fetchall()
+    return render_template("linklist.html", page_header="Users", list=result, direction="/users/")
+
+@app.route("/users/<string:name>")
+def user_info(name):
+    sql = "SELECT R.name FROM Recipes R, Users U WHERE U.id=R.user_id AND U.username=:uname"
+    result = db.session.execute(sql, {"uname":name}).fetchall()
+    return render_template("linklist.html", page_header=name, list=result, direction="/users/"+name+"/")
+
+@app.route("/users/<string:name>/<string:recipe>")
+def recipe(name, recipe):
+    sql = "SELECT I.name, I.amount, Ins.text FROM Instructions Ins, Ingredients I, Recipes R, Users U WHERE U.username=:uname AND R.name=:rname AND I.recipe_id=R.id AND R.user_id=U.id AND Ins.recipe_id=R.id"
+    result = db.session.execute(sql, {"uname":name, "rname":recipe}).fetchall()
+    return render_template("recipe.html", recipe_name=recipe, page_header="Ingredients", ingredients=result, instructions=result)

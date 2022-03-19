@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Recipe Fort</title>
+    </head>
+    <body>
+        <h3>{{ list_header }}</h3>
+        <br>
+        <ul>
+            {% for element in list %}
+            <li> <a href="{{ direction }}{{ element[0] }}">{{ element[0] }}</a>
+            {% endfor %}
+        </ul>
+    </body>
+</html>
