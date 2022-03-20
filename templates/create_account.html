@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Recipe Fort</title>
+    </head>
+    <body>
+        <h2>{{ page_header }}</h2>
+        {% if session.username %}
+        <p>Logged in as {{ session.username }} <a href="/logout">Log out</a> to crete new user.</p> 
+        {% else %}
+        <p>{{ creation_error }}</p>
+        <form action="/register_user" method="POST">
+            <p>Choose username: <input type="text" name="username"></p>
+            <p>Enter password:  <input type="password" name="newpassword"></p>
+            <p>Password again:  <input type="password" name="newpassword2"></p>
+            <input type="submit" value="Create user">
+        </form>
+        {% endif %}
+    </body>
+</html>

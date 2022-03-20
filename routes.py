@@ -1,6 +1,7 @@
 from app import app
 from app import db
-from flask import redirect, render_template, request, session, flash
+from flask import redirect, render_template, request, session
+import string
 
 @app.route("/")
 def index():
@@ -24,6 +25,50 @@ def login():
 def logout():
     del session["username"]
     return redirect("/")
+
+@app.route("/create_account")
+def create_account():
+    return render_template("create_account.html", page_header="Recipe Fort")
+
+@app.route("/register_user", methods=["POST"])
+def register_user():
+    username = request.form["username"]
+    p1 = request.form["newpassword"]
+    p2 = request.form["newpassword2"]
+    creation_error=""
+    if len(username) > 20:
+        creation_error = "Username must not be over 20 charaters long."
+        return render_template("create_account.html", creation_error=creation_error)
+    elif len(p1) > 20:
+        creation_error = "Password must not be over 20 charaters long."
+        return render_template("create_account.html", creation_error=creation_error)
+    elif p1 != p2:
+        creation_error = "Passwords did not match"
+        return render_template("create_account.html", creation_error=creation_error)
+
+    for letter in username:
+        if letter not in string.ascii_letters and letter not in string.digits:
+            creation_error = "Use only uppercase and lowercase letters and numbers in username"
+            return render_template("create_account.html", creation_error=creation_error)
+    
+    for letter in p1:
+        if letter not in string.ascii_letters and letter not in string.digits:
+            creation_error = "Use only uppercase and lowercase letters and numbers in password"
+            return render_template("create_account.html", creation_error=creation_error)
+
+    sql = "SELECT username FROM Users WHERE username=:uname"
+    result = db.session.execute(sql, {"uname":username}).fetchone()
+    if result is not None:
+        creation_error = "User with that name already exists"
+        return render_template("create_account.html", creation_error=creation_error)
+
+    # No errors, create user
+    sql = "INSERT INTO Users (username, password, admin) VALUES (:uname, :pwrd, FALSE)"
+    db.session.execute(sql, {"uname":username, "pwrd":p1})
+    db.session.commit()
+    return render_template("register_user.html", page_header="Recipe Fort")
+    
+
 
 @app.route("/users")
 def users():
