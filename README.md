@@ -21,6 +21,8 @@
 - Toistaiseksi pystyy listaamaan käyttäjät ja reseptit
 - lukemaan reseptejä
 
-Herokua en ole saanut kunnolla toimimaan, aloitussivu ja uuden käyttäjän luomiseen käytettävä formi näkyy, mutta muut sivut eivät toimi.
+sovelluksen käyttöliittymä on vielä pahasti kesken, joten toiminnallisuuksia on vielä testattava osoitteilla
+
+Heroku:
 https://recipe-fort.herokuapp.com/
 https://recipe-fort.herokuapp.com/create_account
