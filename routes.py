@@ -68,15 +68,7 @@ def register_user():
     db.session.commit()
     return render_template("register_user.html", page_header="Recipe Fort")
     
-@app.route("/recipes", method=["POST"])
-def recipes():
-    recipe_name = request.form["recipe_name"]
-    if len(recipe_name) > 0:
-        sql = "SELECT name FROM Recipes WHERE name LIKE:r_name"
-        result = db.session.execute(sql, {"r_name":recipe_name})
-        return render_template("recipes_list.html", page_header="Recipes", list=result, direction="/")
-    else:
-        return render_template("recipes_list.html", page_header="Recipes", list="", direction="/")
+
 
 @app.route("/users")
 def users():
