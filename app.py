@@ -8,6 +8,7 @@ app = Flask(__name__)
 #sk = secrets.token_hex(16)
 #sk = "1234"
 app.secret_key = getenv("SECRET_KEY")
+#app.secret_key = sk
 #app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql:///desideri"
 app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
 db = SQLAlchemy(app)

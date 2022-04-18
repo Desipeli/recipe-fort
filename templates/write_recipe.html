@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Recipe Fort</title>
+    </head>
+    <body>
+        <h2>Recipe Fort</h2>
+        {% if session.username %}
+        <p>Logged in as {{ session.username }} <a href="/logout">Log out</a></p> 
+        <form action="/create_recipe" method="POST">
+            <p>Recipe name: <input type="text" name="recipe_name" value="{{ request.form['recipe_name'] }}"></p>
+            <p>Active time: <input type="number" min="0" step="1" name="active_time" value="{{ request.form['active_time'] }}"></p>
+            <p>Paddive time: <input type="number" min="0" step="1" name="passive_time" value="{{ request.form['passive_time'] }}"></p>
+
+        </form>
+        {% else %}
+        <p>You must be logged in to post a new recipe</p>
+        <form action="/login" method="POST">
+            <p>Username: <input type="text" name="username"></p>
+            <p>Password:  <input type="password" name="password"></p>
+            <input type="submit" value="Log in">
+        </form>
+        {% endif %}
+        <script>
+            alert("viesti")
+        </script>
+    </body>
+</html>
