@@ -1,7 +1,7 @@
 from app import app
 from app import db
 from flask import redirect, render_template, request, session
-from sqlalchemy import asc, desc
+from sqlalchemy import asc, desc, true
 import string
 import math
 
@@ -155,10 +155,52 @@ def create_recipe():
     recipe_name=request.form['recipe_name']
     active_time=request.form['active_time']
     passive_time=request.form['passive_time']
-    lista = request.form.getlist('ingredient')
-    print(recipe_name, active_time, passive_time)
-    print(lista)
-    return render_template("write_recipe.html")
+    ingredients = request.form.getlist('ingredient')
+    amounts = request.form.getlist('amount')
+    units = request.form.getlist('unit')
+    instructions = request.form['instructions']
+    recipe_name_error = ""
+    active_time_error = ""
+    passive_time_error = ""
+    ingredient_error = ""
+    amount_error = ""
+    unit_error = ""
+    instructions_error = ""
+    error = False
+
+    if len(recipe_name) == 0 or len(recipe_name) > 100:
+        error = True
+        recipe_name_error = "Recipe name must be 1-100 characters long"
+    try:
+        int(active_time)
+    except:
+        error = True
+        active_time_error = "Time must be integer"
+    try:
+        int(passive_time)
+    except:
+        error = True
+        passive_time_error = "Time must be integer"
+    
+    for i in ingredients:
+        if len(i) == 0 or len(i) > 100:
+            error = True
+            ingredient_error = "ingredients must be 1-100 characters long"
+    for a in amounts:
+        try:
+            float(a)
+        except:
+            error = True
+            amount_error = "Amount must be a number"
+    for u in units:
+        if len(u) > 100:
+            error = True
+            unit_error = "Units must be 0-100 characters long"
+    if len(instructions) > 10000:
+        error = True
+        instructions_error = "Instructions must be <= 10000 characters long"
+    if error:
+        return render_template("write_recipe.html", recipe_name_error=recipe_name_error, active_time_error=active_time_error, passive_time_error=passive_time_error, ingredient_error=ingredient_error, amount_error=amount_error, unit_error=unit_error, instructions_error=instructions_error, ingredient_list=ingredients, amount_list=amounts, unit_list=units)
 
 @app.route("/add_ingredient", methods=["POST"])
 def add_ingredient():
