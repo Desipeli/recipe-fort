@@ -17,10 +17,10 @@
         <h3>{{ list_header }}</h3>
         <br>
         <form action="/recipe_search" method="POST">
-            <p>Search by recipe name: <input type="text" name="recipe_name"></p>
-            <p>Search by username: <input type="text" name="username"></p>
-            <p>Max active time (minutes): <input type="number" min="0" step="1" name="active_time"></p>
-            <p>Max passive time (minutes): <input type="number" min="0" step="1" name="passive_time"></p>
+            <p>Search by recipe name: <input type="text" name="recipe_name" value="{{ request.form['recipe_name'] }}"></p>
+            <p>Search by username: <input type="text" name="username" value="{{ request.form['username'] }}"></p>
+            <p>Max active time (minutes): <input type="number" min="0" step="1" name="active_time" value="{{ request.form['active_time'] }}"></p>
+            <p>Max passive time (minutes): <input type="number" min="0" step="1" name="passive_time" value="{{ request.form['passive_time'] }}"></p>
             <p>
                 <input type="radio" name="order_name" value="0" checked> A-Ö
                 <input type="radio" name="order_name" value="1"> Ö-A
@@ -30,6 +30,7 @@
         <ul>
             {% for element in list %}
             <li> <a href="{{ direction }}{{ element[0] }}">{{ element[1] }}</a>
+                 {{ element[2] }}
             {% endfor %}
         </ul>
     </body>
