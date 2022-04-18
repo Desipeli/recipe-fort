@@ -7,12 +7,12 @@ import math
 
 @app.route("/")
 def index():
-    return render_template("index.html", page_header="Recipe Fort")
+    return render_template("index.html")
 
 @app.route("/login", methods=["POST", "GET"])
 def login():
     if request.method == "GET":
-        return render_template("index.html", page_header="Recipe Fort")
+        return render_template("index.html")
     username = request.form["username"]
     password = request.form["password"]
     sql = "SELECT password FROM Users WHERE username=:uname"
@@ -23,7 +23,9 @@ def login():
         if fetched_pw.password == password:
             session["username"] = username
             login_error = ""
-    return render_template("index.html", page_header="Recipe Fort", login_error=login_error)
+    if login_error:
+        return render_template("index.html", page_header="Recipe Fort", login_error=login_error)
+    return redirect(request.referrer)
 
 @app.route("/logout")
 def logout():
