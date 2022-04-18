@@ -145,3 +145,7 @@ def profile(uname):
         return render_template("profile.html", profile_name=uname)
     else:
         return render_template("index.html", login_error=f"You must be logged in as {uname}")
+
+@app.route("/write_recipe")
+def write_recipe():
+    return render_template("write_recipe.html")
