@@ -149,3 +149,29 @@ def profile(uname):
 @app.route("/write_recipe")
 def write_recipe():
     return render_template("write_recipe.html")
+
+@app.route("/create_recipe", methods=["POST"])
+def create_recipe():
+    recipe_name=request.form['recipe_name']
+    active_time=request.form['active_time']
+    passive_time=request.form['passive_time']
+    lista = request.form.getlist('ingredient')
+    print(recipe_name, active_time, passive_time)
+    print(lista)
+    return render_template("write_recipe.html")
+
+@app.route("/add_ingredient", methods=["POST"])
+def add_ingredient():
+    print("ruute")
+    ingredients = request.form.getlist('ingredient')
+    amounts = request.form.getlist('amount')
+    units = request.form.getlist('unit')
+    print(ingredients, amounts, units)
+    if ingredients == None:
+        ingredients = []
+        units = []
+        amounts = []
+    ingredients.append(" ")
+    amounts.append(0)
+    units.append(" ")
+    return render_template("write_recipe.html", ingredient_list=ingredients, amount_list=amounts, unit_list=units)

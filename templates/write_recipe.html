@@ -6,13 +6,39 @@
     <body>
         <h2>Recipe Fort</h2>
         {% if session.username %}
-        <p>Logged in as {{ session.username }} <a href="/logout">Log out</a></p> 
+        <p>Logged in as {{ session.username }} <a href="/logout">Log out</a></p>
         <form action="/create_recipe" method="POST">
-            <p>Recipe name: <input type="text" name="recipe_name" value="{{ request.form['recipe_name'] }}"></p>
-            <p>Active time: <input type="number" min="0" step="1" name="active_time" value="{{ request.form['active_time'] }}"></p>
-            <p>Paddive time: <input type="number" min="0" step="1" name="passive_time" value="{{ request.form['passive_time'] }}"></p>
-
+            <p>recipe_name: <input type="text" name="recipe_name" value="{{ request.form['recipe_name'] }}"></p>
+            <p>active_time:  <input type="number" name="active_time" value="{{ request.form['active_time'] }}"></p>
+            <p>passive_time: <input type="number" name="passive_time" value="{{ request.form['passive_time'] }}"></p>
+            <ul>
+                <!--
+                {% for element in ingredient_list %}
+                <li>
+                    <input name="ingredient" type="text" value={{element}}>
+                    <input name="ingredient" type="number" size="5" value={{element}}>
+                    <input name="ingredient" type="text" value={{element}}>
+                </li>
+                {% endfor %}
+            -->
+            {% for i in range(ingredient_list|length) %}
+            <li>
+                <input name="ingredient" type="text" value={{ingredient_list[i]}}>
+                <input name="amount" type="number" size="5" value={{amount_list[i]}}>
+                <input name="unit" type="text" value={{unit_list[i]}}>
+            </li>
+            {% endfor %}
+            </ul>
+            
+            <button type="submit" formaction="/add_ingredient">add ingredient</button>
+            <input type="submit" value="create">
         </form>
+        <!--
+        <form action="/add_ingredient" method="POST">
+            <button type="submit">klkk</button>
+        </form>
+        -->
+        
         {% else %}
         <p>You must be logged in to post a new recipe</p>
         <form action="/login" method="POST">
@@ -22,7 +48,17 @@
         </form>
         {% endif %}
         <script>
-            alert("viesti")
+
+            /*
+            function addInput() {
+                const f1=document.getElementById("listat");
+                var element=document.createElement("INPUT")
+                //var element=document.getElementById("123").cloneNode(true);
+                element.setAttribute("type", "text")
+                f1.appendChild("<li>")
+                f1.appendChild(element);
+            }
+            */
         </script>
     </body>
 </html>
