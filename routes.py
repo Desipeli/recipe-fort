@@ -3,13 +3,16 @@ from app import db
 from flask import redirect, render_template, request, session
 from sqlalchemy import asc, desc
 import string
+import math
 
 @app.route("/")
 def index():
     return render_template("index.html", page_header="Recipe Fort")
 
-@app.route("/login", methods=["POST"])
+@app.route("/login", methods=["POST", "GET"])
 def login():
+    if request.method == "GET":
+        return render_template("index.html", page_header="Recipe Fort")
     username = request.form["username"]
     password = request.form["password"]
     sql = "SELECT password FROM Users WHERE username=:uname"
@@ -25,7 +28,7 @@ def login():
 @app.route("/logout")
 def logout():
     del session["username"]
-    return redirect("/")
+    return redirect(request.referrer)
 
 @app.route("/create_account")
 def create_account():
@@ -100,6 +103,7 @@ def recipe(recipe_id):
     print("res", result)
     return render_template("recipe.html", recipe_name=result[0][2], page_header="Ingredients", ingredients=result, instructions=instructions[0])
 
+
 @app.route("/recipe_search", methods=["POST", "GET"])
 def recipe_search():
     if request.method == "GET":
@@ -118,14 +122,12 @@ def recipe_search():
         int(active_time)
     except:
         if active_time == "":
-            active_time = 9999 
-        else: active_time = 0
+            active_time = math.inf
     try:
         int(passive_time)
     except:
         if passive_time == "":
-            passive_time = 9999
-        else: passive_time = 0
+            passive_time = math.inf
 
     sql_user = "(SELECT username FROM Users WHERE username LIKE :username)"
     if order_name == "1":
@@ -133,5 +135,11 @@ def recipe_search():
     else:
         sql = "SELECT R.id, R.name, U.username FROM Recipes R, Users U WHERE R.name LIKE :r_name AND U.username LIKE :username AND U.id = R.user_id AND R.active_time<=:active_time AND R.passive_time<=:passive_time ORDER BY R.name ASC"
     result = db.session.execute(sql, {"r_name":"%"+recipe_name+"%", "active_time":active_time, "passive_time":passive_time, "username":"%"+username+"%"}).fetchall()
-    print(result, sql)
     return render_template("recipe_list.html", page_heade="Recipes", direction="/recipe/", list=result)
+
+@app.route("/profile/<string:uname>")
+def profile(uname):
+    if session['username'] == uname:
+        return render_template("profile.html", profile_name=uname)
+    else:
+        return render_template("index.html", login_error=f"You must be logged in as {uname}")
