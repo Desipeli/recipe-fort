@@ -10,6 +10,9 @@
         <p><a href="/profile/{{session.username}}">View profile</a></p>
         <p><a href="/write_recipe">Write a new recipe</a></p>
         {% else %}
+        <form action="/create_account">
+            <input type="submit" value="New User">
+        </form>
         <form action="/login" method="POST">
             <p>Username: <input type="text" name="username"></p>
             <p>Password:  <input type="password" name="password"></p>

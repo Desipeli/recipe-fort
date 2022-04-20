@@ -7,6 +7,9 @@
         {% if session.username %}
         <p>Logged in as {{ session.username }} <a href="/logout">Log out</a></p> 
         {% else %}
+        <form action="/create_account">
+            <input type="submit" value="New User">
+        </form>
         <p>{{ login_error }}</p>
         <form action="/login" method="POST">
             <p>Username: <input type="text" name="username"></p>
