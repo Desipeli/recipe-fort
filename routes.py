@@ -125,7 +125,10 @@ def recipe_search():
     active_time = request.form["active_time"]
     passive_time = request.form["passive_time"]
     order_name = request.form["order_name"]
-
+    difficulty = request.form['difficulty']
+    if difficulty == "": difficulty = 0
+    meal_type = request.form['meal_type']
+    meal_type_column = "meal_type"
 
     # Check if int and if times are empty = no limit
     try:
@@ -140,11 +143,18 @@ def recipe_search():
             passive_time = math.inf
 
     sql_user = "(SELECT username FROM Users WHERE username LIKE :username)"
-    if order_name == "1":
-        sql = "SELECT R.id, R.name, U.username FROM Recipes R, Users U WHERE R.name LIKE :r_name AND U.username LIKE :username AND U.id = R.user_id AND R.active_time<=:active_time AND R.passive_time<=:passive_time ORDER BY R.name DESC"
-    else:
-        sql = "SELECT R.id, R.name, U.username FROM Recipes R, Users U WHERE R.name LIKE :r_name AND U.username LIKE :username AND U.id = R.user_id AND R.active_time<=:active_time AND R.passive_time<=:passive_time ORDER BY R.name ASC"
-    result = db.session.execute(sql, {"r_name":"%"+recipe_name+"%", "active_time":active_time, "passive_time":passive_time, "username":"%"+username+"%"}).fetchall()
+    sql = "SELECT R.id, R.name, U.username FROM Recipes R, Users U WHERE R.name LIKE :r_name AND U.username LIKE :username AND U.id = R.user_id AND R.active_time<=:active_time AND R.passive_time<=:passive_time AND difficulty<=:difficulty"
+    if meal_type in meal_categories.meal_types:
+        sql += " AND meal_type=:meal_type"
+    if order_name == "0":
+        sql += " ORDER BY R.name ASC"
+    elif order_name == "1":
+        sql += " ORDER BY R.name DESC"
+    elif order_name == "2":
+        sql += " ORDER BY R.timestamp DESC"
+    elif order_name == "3":
+        sql += " ORDER BY R.timestamp ASC"
+    result = db.session.execute(sql, {"r_name":"%"+recipe_name+"%", "active_time":active_time, "passive_time":passive_time, "username":"%"+username+"%", "difficulty":difficulty, "meal_type":meal_type}).fetchall()
     return render_template("recipe_list.html", page_heade="Recipes", direction="/recipe/", list=result, meal_types=meal_categories.meal_types)
 
 @app.route("/profile/<string:uname>")
