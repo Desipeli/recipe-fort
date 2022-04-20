@@ -117,7 +117,7 @@ def recipe(recipe_id):
 @app.route("/recipe_search", methods=["POST", "GET"])
 def recipe_search():
     if request.method == "GET":
-        sql = "SELECT id, name FROM Recipes"
+        sql = "SELECT R.id, R.name, U.username FROM Recipes R, Users U WHERE R.user_id=U.id"
         result = db.session.execute(sql).fetchall()
         return render_template("recipe_list.html", page_header="Recipes", direction="/recipe/", list=result)
     recipe_name = request.form["recipe_name"]
