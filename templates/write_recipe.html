@@ -11,14 +11,15 @@
             <p>recipe name: <input type="text" name="recipe_name" value="{{ request.form['recipe_name'] }}"> {{ recipe_name_error }}</p>
             <p>active time:  <input type="number" name="active_time" value="{{ request.form['active_time'] }}">  {{ active_time_error }}</p>
             <p>passive time: <input type="number" name="passive_time" value="{{ request.form['passive_time'] }}"> {{ passive_time_error }}</p>
-            <p>difficulty: <input type="number" min="0" max="3" step="1" name="difficulty" value="{{ request.form['difficulty'] }}"> {{ difficulty_error }}</p>
+            <p>difficulty: <input type="number" min="0" max="4" step="1" name="difficulty" value="{{ request.form['difficulty'] }}"> {{ difficulty_error }}</p>
             <p>
                 category
-                 <select id="meal_types">
-                    <option value="meal">meal</option>
-                    <option value="dessert">dessert</option>
-                    <option value="other">other</option>
+                 <select name="meal_type" selected="{{ request.form['meal_type'] }}">
+                    {% for mt in meal_types %}
+                    <option value="{{ mt }}">{{ mt }}</option>
+                    {% endfor %}
                 </select>
+                {{ meal_type_error }}
             </p>
             <ul>
             <p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ingredient &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; amount &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unit</b></p>
