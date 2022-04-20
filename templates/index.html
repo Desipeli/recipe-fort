@@ -7,6 +7,8 @@
         <h2>Recipe Fort</h2>
         {% if session.username %}
         <p>Logged in as {{ session.username }} <a href="/logout">Log out</a></p> 
+        <p><a href="/profile/{{session.username}}">View profile</a></p>
+        <p><a href="/write_recipe">Write a new recipe</a></p>
         {% else %}
         <form action="/login" method="POST">
             <p>Username: <input type="text" name="username"></p>
@@ -16,6 +18,5 @@
         {% endif %}
         <p>{{ login_error }}</p>
         <p><a href="/recipe_search">Search Recipes</a></p>
-        <p><a href="/profile/{{session.username}}">View profile</a></p>
     </body>
 </html>
