@@ -26,6 +26,13 @@
             <p>Max active time (minutes): <input type="number" min="0" step="1" name="active_time" value="{{ request.form['active_time'] }}"></p>
             <p>Max passive time (minutes): <input type="number" min="0" step="1" name="passive_time" value="{{ request.form['passive_time'] }}"></p>
             <p>Max difficulty (0-3): <input type="number" min="0" max="3" step="1" name="difficulty" value="{{ request.form['difficulty'] }}"></p>
+            <p>Category: <select name="meal_type">
+                <option value="all">all</option>
+                {% for mt in meal_types %}
+                <option value="{{ mt }}">{{ mt }}</option>
+                {% endfor %}
+                </select>
+            </p>
             <p>
                 <input type="radio" name="order_name" value="0" checked> A-Ö
                 <input type="radio" name="order_name" value="1"> Ö-A
