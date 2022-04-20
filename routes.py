@@ -6,6 +6,8 @@ import string
 import math
 import meal_categories
 from datetime import datetime
+from werkzeug.security import check_password_hash, generate_password_hash
+
 
 @app.route("/")
 def index():
@@ -22,7 +24,7 @@ def login():
     fetched_pw = result.fetchone()
     login_error = "Wrong username or password"
     if fetched_pw:
-        if fetched_pw.password == password:
+        if check_password_hash(fetched_pw.password, password):
             session["username"] = username
             login_error = ""
     if login_error:
@@ -74,8 +76,9 @@ def register_user():
         return render_template("create_account.html", creation_error=creation_error)
 
     # No errors, create user
+    password_hash = generate_password_hash(p1)
     sql = "INSERT INTO Users (username, password, admin) VALUES (:uname, :pwrd, FALSE)"
-    db.session.execute(sql, {"uname":username, "pwrd":p1})
+    db.session.execute(sql, {"uname":username, "pwrd":password_hash})
     db.session.commit()
     return render_template("register_user.html", page_header="Recipe Fort")
     
