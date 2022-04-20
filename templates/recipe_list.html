@@ -18,16 +18,19 @@
             <input type="submit" value="Log in">
         </form>
         {% endif %}
-        <h3>{{ list_header }}</h3>
+        <!--<h3>{{ list_header }}</h3>-->
         <br>
         <form action="/recipe_search" method="POST">
             <p>Search by recipe name: <input type="text" name="recipe_name" value="{{ request.form['recipe_name'] }}"></p>
-            <p>Search by username: <input type="text" name="username" value="{{ request.form['username'] }}"></p>
+            <p>Recipes by "username": <input type="text" name="username" value="{{ request.form['username'] }}"></p>
             <p>Max active time (minutes): <input type="number" min="0" step="1" name="active_time" value="{{ request.form['active_time'] }}"></p>
             <p>Max passive time (minutes): <input type="number" min="0" step="1" name="passive_time" value="{{ request.form['passive_time'] }}"></p>
+            <p>Max difficulty (0-3): <input type="number" min="0" max="3" step="1" name="difficulty" value="{{ request.form['difficulty'] }}"></p>
             <p>
                 <input type="radio" name="order_name" value="0" checked> A-Ö
                 <input type="radio" name="order_name" value="1"> Ö-A
+                <input type="radio" name="order_name" value="2"> newest first
+                <input type="radio" name="order_name" value="3"> oldest first
             </p>
             <input type="submit" value="search">
         </form>
