@@ -5,6 +5,7 @@ from sqlalchemy import asc, desc, true
 import string
 import math
 import meal_categories
+from datetime import datetime
 
 @app.route("/")
 def index():
@@ -215,13 +216,23 @@ def check_recipe():
         instructions_error = "Instructions must be <= 10000 characters long"
     if error:
         return render_template("write_recipe.html", meal_types=meal_categories.meal_types, recipe_name_error=recipe_name_error, active_time_error=active_time_error, passive_time_error=passive_time_error, ingredient_error=ingredient_error, amount_error=amount_error, unit_error=unit_error, difficulty_error=difficulty_error, instructions_error=instructions_error, ingredient_list=ingredients, amount_list=amounts, unit_list=units)
-    print("Recipe name:", recipe_name)
-    print("active time:", active_time)
-    print("passive time:", passive_time)
+    sql_user_id = "SELECT id FROM Users WHERE username =:uname"
+    user_id = db.session.execute(sql_user_id, {"uname":session["username"]}).fetchone()[0]
+    dt = datetime.now()
+    sql_create_recipe = "INSERT INTO Recipes (name, user_id, difficulty, active_time, passive_time, meal_type, timestamp) VALUES (:recipe_name, :user_id, :difficulty, :active_time, :passive_time, :meal_type, :timestamp)"
+    db.session.execute(sql_create_recipe, {"recipe_name":recipe_name, "user_id":user_id, "difficulty":difficulty, "active_time":active_time, "passive_time":passive_time, "meal_type":meal_type, "timestamp":dt})
+    db.session.commit()
+    sql_recipe_id = "SELECT id FROM Recipes WHERE name=:recipe_name AND user_id=:user_id AND timestamp=:timestamp"
+    recipe_id = db.session.execute(sql_recipe_id, {"recipe_name":recipe_name, "user_id":user_id, "timestamp":dt}).fetchone()[0]
     for i in range(len(ingredients)):
-        print(ingredients[i], amounts[i], units[i])
-    print("instructions:")
-    print(instructions)
+        i_name = ingredients[i]
+        i_amount = str(amounts[i]) + " "  + units[i]
+        sql_insert_ingredients = "INSERT INTO Ingredients (recipe_id, name, amount) VALUES (:recipe_id, :name, :amount)"
+        db.session.execute(sql_insert_ingredients, {"recipe_id":recipe_id, "name":i_name, "amount":i_amount})
+    sql_instructions = "INSERT INTO Instructions (recipe_id, text) VALUES (:recipe_id, :text)"
+    db.session.execute(sql_instructions, {"recipe_id":recipe_id, "text":instructions})
+    db.session.commit()
+    return redirect("/")
 
 @app.route("/add_ingredient", methods=["POST"])
 def add_ingredient():
