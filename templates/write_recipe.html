@@ -4,7 +4,7 @@
         <title>Recipe Fort</title>
     </head>
     <body>
-        <h2>Recipe Fort</h2>
+        <h2><a href="/">Recipe Fort</a></h2>
         {% if session.username %}
         <p>Logged in as {{ session.username }} <a href="/logout">Log out</a></p>
         <form action="/check_recipe" method="POST">
