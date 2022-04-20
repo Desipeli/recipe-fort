@@ -7,7 +7,7 @@
         <h2>Recipe Fort</h2>
         {% if session.username %}
         <p>Logged in as {{ session.username }} <a href="/logout">Log out</a></p>
-        <form action="/create_recipe" method="POST">
+        <form action="/check_recipe" method="POST">
             <p>recipe name: <input type="text" name="recipe_name" value="{{ request.form['recipe_name'] }}"> {{ recipe_name_error }}</p>
             <p>active time:  <input type="number" name="active_time" value="{{ request.form['active_time'] }}">  {{ active_time_error }}</p>
             <p>passive time: <input type="number" name="passive_time" value="{{ request.form['passive_time'] }}"> {{ passive_time_error }}</p>
