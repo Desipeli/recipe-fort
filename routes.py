@@ -201,10 +201,16 @@ def create_recipe():
         instructions_error = "Instructions must be <= 10000 characters long"
     if error:
         return render_template("write_recipe.html", recipe_name_error=recipe_name_error, active_time_error=active_time_error, passive_time_error=passive_time_error, ingredient_error=ingredient_error, amount_error=amount_error, unit_error=unit_error, instructions_error=instructions_error, ingredient_list=ingredients, amount_list=amounts, unit_list=units)
+    print("Recipe name:", recipe_name)
+    print("active time:", active_time)
+    print("passive time:", passive_time)
+    for i in range(len(ingredients)):
+        print(ingredients[i], amounts[i], units[i])
+    print("instructions:")
+    print(instructions)
 
 @app.route("/add_ingredient", methods=["POST"])
 def add_ingredient():
-    print("ruute")
     ingredients = request.form.getlist('ingredient')
     amounts = request.form.getlist('amount')
     units = request.form.getlist('unit')
@@ -216,4 +222,15 @@ def add_ingredient():
     ingredients.append(" ")
     amounts.append(0)
     units.append(" ")
+    return render_template("write_recipe.html", ingredient_list=ingredients, amount_list=amounts, unit_list=units)
+
+@app.route("/remove_ingredient", methods=["POST"])
+def remove_ingredient():
+    ingredients = request.form.getlist('ingredient')
+    amounts = request.form.getlist('amount')
+    units = request.form.getlist('unit')
+    if len(ingredients) > 0:
+        ingredients.pop()
+        amounts.pop()
+        units.pop()
     return render_template("write_recipe.html", ingredient_list=ingredients, amount_list=amounts, unit_list=units)
