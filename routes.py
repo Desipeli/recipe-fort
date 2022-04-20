@@ -1,13 +1,12 @@
 from app import app
-from app import db
+from db import db
 from flask import redirect, render_template, request, session
-from sqlalchemy import asc, desc, true
 import string
 import math
 import meal_categories
 from datetime import datetime
 from werkzeug.security import check_password_hash, generate_password_hash
-
+import users
 
 @app.route("/")
 def index():
@@ -19,81 +18,50 @@ def login():
         return render_template("index.html")
     username = request.form["username"]
     password = request.form["password"]
-    sql = "SELECT password FROM Users WHERE username=:uname"
-    result = db.session.execute(sql, {"uname":username})
-    fetched_pw = result.fetchone()
-    login_error = "Wrong username or password"
-    if fetched_pw:
-        if check_password_hash(fetched_pw.password, password):
-            session["username"] = username
-            login_error = ""
-    if login_error:
-        return render_template("index.html", page_header="Recipe Fort", login_error=login_error)
-    return redirect(request.referrer)
+    if users.login(username, password):
+        return redirect(request.referrer)
+    return render_template("index.html", page_header="Recipe Fort", login_error="Wrong username or password")
 
 @app.route("/logout")
 def logout():
-    del session["username"]
     return redirect(request.referrer)
 
 @app.route("/create_account")
 def create_account():
-    return render_template("create_account.html", page_header="Recipe Fort")
+    return render_template("create_account.html")
 
 @app.route("/register_user", methods=["POST"])
 def register_user():
     username = request.form["username"]
     p1 = request.form["newpassword"]
     p2 = request.form["newpassword2"]
-    creation_error=""
-    if len(username) > 20:
-        creation_error = "Username must not be over 20 charaters long."
-        return render_template("create_account.html", creation_error=creation_error)
-    if len(username) < 3:
-        creation_error = "Username must be at least 3 charaters long"
-        return render_template("create_account.html", creation_error=creation_error)
-    elif len(p1) > 20:
-        creation_error = "Password must not be over 20 charaters long."
-        return render_template("create_account.html", creation_error=creation_error)
-    elif p1 != p2:
-        creation_error = "Passwords did not match"
+    creation_error = ""
+    username_error = users.check_username_valid(username)
+    password_error = users.check_password_valid(p1, p2)
+
+    if username_error: creation_error = username_error + ". "
+    if password_error: creation_error += password_error
+    if creation_error:
         return render_template("create_account.html", creation_error=creation_error)
 
-    for letter in username:
-        if letter not in string.ascii_letters and letter not in string.digits:
-            creation_error = "Use only uppercase and lowercase letters and numbers in username"
-            return render_template("create_account.html", creation_error=creation_error)
-    
-    for letter in p1:
-        if letter not in string.ascii_letters and letter not in string.digits:
-            creation_error = "Use only uppercase and lowercase letters and numbers in password"
-            return render_template("create_account.html", creation_error=creation_error)
-
-    sql = "SELECT username FROM Users WHERE username=:uname"
-    result = db.session.execute(sql, {"uname":username}).fetchone()
-    if result is not None:
+    if users.check_if_user_exists(username):
         creation_error = "User with that name already exists"
         return render_template("create_account.html", creation_error=creation_error)
 
     # No errors, create user
-    password_hash = generate_password_hash(p1)
-    sql = "INSERT INTO Users (username, password, admin) VALUES (:uname, :pwrd, FALSE)"
-    db.session.execute(sql, {"uname":username, "pwrd":password_hash})
-    db.session.commit()
-    return render_template("register_user.html", page_header="Recipe Fort")
+    creation_message_1 = f"Account {username} created successfully. Go back to "
+    creation_message_2 = " to log in"
+    if users.register_user(username, p1) == False:
+        creation_message_1 = f"An error occurred during registration, try again later: "
+        creation_message_2 = ""
+    return render_template("register_user.html", creation_message_1=creation_message_1, creation_message_2=creation_message_2)
     
 
-
-@app.route("/users")
-def users():
-    result = db.session.execute("SELECT username FROM Users ORDER BY username").fetchall()
-    return render_template("linklist.html", page_header="Users", list=result, direction="/users/")
-
-@app.route("/users/<string:name>")
-def user_info(name):
-    sql = "SELECT R.name FROM Recipes R, Users U WHERE U.id=R.user_id AND U.username=:uname"
-    result = db.session.execute(sql, {"uname":name}).fetchall()
-    return render_template("linklist.html", page_header=name, list=result, direction="/users/"+name+"/")
+#@app.route("/users/<string:name>")
+#def user_info(name):
+#    sql = "SELECT R.name FROM Recipes R, Users U WHERE U.id=R.user_id AND U.username=:uname"
+#    result = db.session.execute(sql, {"uname":name}).fetchall()
+#    return render_template("linklist.html", page_header=name, list=result, direction="/users/"+name+"/")
 
 #@app.route("/users/<string:name>/<string:recipe>")
 #def recipe(name, recipe):
