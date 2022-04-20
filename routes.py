@@ -47,6 +47,9 @@ def register_user():
     if len(username) > 20:
         creation_error = "Username must not be over 20 charaters long."
         return render_template("create_account.html", creation_error=creation_error)
+    if len(username) < 3:
+        creation_error = "Username must be at least 3 charaters long"
+        return render_template("create_account.html", creation_error=creation_error)
     elif len(p1) > 20:
         creation_error = "Password must not be over 20 charaters long."
         return render_template("create_account.html", creation_error=creation_error)
