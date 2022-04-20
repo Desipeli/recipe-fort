@@ -4,6 +4,7 @@ from flask import redirect, render_template, request, session
 from sqlalchemy import asc, desc, true
 import string
 import math
+import meal_categories
 
 @app.route("/")
 def index():
@@ -148,10 +149,11 @@ def profile(uname):
 
 @app.route("/write_recipe")
 def write_recipe():
-    return render_template("write_recipe.html")
+    return render_template("write_recipe.html", meal_types=meal_categories.meal_types)
 
-@app.route("/create_recipe", methods=["POST"])
-def create_recipe():
+@app.route("/check_recipe", methods=["POST"])
+def check_recipe():
+    meal_types = meal_categories.meal_types
     recipe_name=request.form['recipe_name']
     active_time=request.form['active_time']
     passive_time=request.form['passive_time']
@@ -159,6 +161,10 @@ def create_recipe():
     amounts = request.form.getlist('amount')
     units = request.form.getlist('unit')
     instructions = request.form['instructions']
+    difficulty = request.form['difficulty']
+    meal_type = request.form['meal_type']
+    difficulty_error = ""
+    meal_type_error = ""
     recipe_name_error = ""
     active_time_error = ""
     passive_time_error = ""
@@ -167,7 +173,7 @@ def create_recipe():
     unit_error = ""
     instructions_error = ""
     error = False
-
+    
     if len(recipe_name) == 0 or len(recipe_name) > 100:
         error = True
         recipe_name_error = "Recipe name must be 1-100 characters long"
@@ -181,6 +187,14 @@ def create_recipe():
     except:
         error = True
         passive_time_error = "Time must be integer"
+    try:
+        int(difficulty)
+    except:
+        error = True
+        difficulty_error = "Difficulty must be set 0-3"
+    if meal_type not in meal_types:
+        error = True
+        meal_type_error = "Select correct category"
     
     for i in ingredients:
         if len(i) == 0 or len(i) > 100:
@@ -200,7 +214,7 @@ def create_recipe():
         error = True
         instructions_error = "Instructions must be <= 10000 characters long"
     if error:
-        return render_template("write_recipe.html", recipe_name_error=recipe_name_error, active_time_error=active_time_error, passive_time_error=passive_time_error, ingredient_error=ingredient_error, amount_error=amount_error, unit_error=unit_error, instructions_error=instructions_error, ingredient_list=ingredients, amount_list=amounts, unit_list=units)
+        return render_template("write_recipe.html", meal_types=meal_categories.meal_types, recipe_name_error=recipe_name_error, active_time_error=active_time_error, passive_time_error=passive_time_error, ingredient_error=ingredient_error, amount_error=amount_error, unit_error=unit_error, difficulty_error=difficulty_error, instructions_error=instructions_error, ingredient_list=ingredients, amount_list=amounts, unit_list=units)
     print("Recipe name:", recipe_name)
     print("active time:", active_time)
     print("passive time:", passive_time)
@@ -222,7 +236,7 @@ def add_ingredient():
     ingredients.append(" ")
     amounts.append(0)
     units.append(" ")
-    return render_template("write_recipe.html", ingredient_list=ingredients, amount_list=amounts, unit_list=units)
+    return render_template("write_recipe.html", meal_types=meal_categories.meal_types, ingredient_list=ingredients, amount_list=amounts, unit_list=units)
 
 @app.route("/remove_ingredient", methods=["POST"])
 def remove_ingredient():
@@ -233,4 +247,4 @@ def remove_ingredient():
         ingredients.pop()
         amounts.pop()
         units.pop()
-    return render_template("write_recipe.html", ingredient_list=ingredients, amount_list=amounts, unit_list=units)
+    return render_template("write_recipe.html", meal_types=meal_categories.meal_types, ingredient_list=ingredients, amount_list=amounts, unit_list=units)
