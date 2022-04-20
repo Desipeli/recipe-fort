@@ -119,7 +119,7 @@ def recipe_search():
     if request.method == "GET":
         sql = "SELECT R.id, R.name, U.username FROM Recipes R, Users U WHERE R.user_id=U.id"
         result = db.session.execute(sql).fetchall()
-        return render_template("recipe_list.html", page_header="Recipes", direction="/recipe/", list=result)
+        return render_template("recipe_list.html", page_header="Recipes", direction="/recipe/", list=result, meal_types=meal_categories.meal_types)
     recipe_name = request.form["recipe_name"]
     username = request.form["username"]
     active_time = request.form["active_time"]
@@ -145,7 +145,7 @@ def recipe_search():
     else:
         sql = "SELECT R.id, R.name, U.username FROM Recipes R, Users U WHERE R.name LIKE :r_name AND U.username LIKE :username AND U.id = R.user_id AND R.active_time<=:active_time AND R.passive_time<=:passive_time ORDER BY R.name ASC"
     result = db.session.execute(sql, {"r_name":"%"+recipe_name+"%", "active_time":active_time, "passive_time":passive_time, "username":"%"+username+"%"}).fetchall()
-    return render_template("recipe_list.html", page_heade="Recipes", direction="/recipe/", list=result)
+    return render_template("recipe_list.html", page_heade="Recipes", direction="/recipe/", list=result, meal_types=meal_categories.meal_types)
 
 @app.route("/profile/<string:uname>")
 def profile(uname):
