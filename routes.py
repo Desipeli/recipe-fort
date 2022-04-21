@@ -72,7 +72,12 @@ def recipe_search():
     difficulty = request.form['difficulty']
     meal_type = request.form['meal_type']
     result = recipes.recipe_search_POST(recipe_name, username, active_time, passive_time, order_name, difficulty, meal_type)
-    return render_template("recipe_list.html", page_heade="Recipes", direction="/recipe/", list=result, meal_types=meal_categories.meal_types)
+    return render_template("recipe_list.html", direction="/recipe/", list=result, meal_types=meal_categories.meal_types)
+
+@app.route("/recipe_search/<string:uname>")
+def recipe_search_user(uname):
+    result = recipes.recipe_search_user(uname)
+    return render_template("recipe_list.html", direction="/recipe/", list=result, meal_types=meal_categories.meal_types)
 
 @app.route("/profile/<string:uname>")
 def profile(uname):

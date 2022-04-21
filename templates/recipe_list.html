@@ -44,7 +44,8 @@
         <ul>
             {% for element in list %}
             <li> <a href="{{ direction }}{{ element[0] }}">{{ element[1] }}</a>
-                 {{ element[2] }}
+                 by 
+                <a href="/recipe_search/{{ element[2] }}"> {{ element[2] }}</a>
             {% endfor %}
         </ul>
     </body>

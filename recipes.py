@@ -19,6 +19,11 @@ def recipe_search_GET():
     sql = "SELECT R.id, R.name, U.username FROM Recipes R, Users U WHERE R.user_id=U.id"
     return db.session.execute(sql).fetchall()
 
+def recipe_search_user(uname):
+    sql = "SELECT R.id, R.name, U.username FROM Recipes R, Users U WHERE R.user_id=U.id AND U.username=:uname"
+    result = db.session.execute(sql, {"uname":uname})
+    return result
+
 def recipe_search_POST(recipe_name, username, active_time, passive_time, order_name, difficulty, meal_type):
     if difficulty == "": difficulty = 3
     meal_type_column = "meal_type"
