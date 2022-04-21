@@ -45,7 +45,7 @@
         
         {% for comment in comments %}
         <p>{{ comment.username }} {{ comment.timestamp }}
-            {% if comment.username ==  session.username or comment.username == creator %}
+            {% if session.username == creator or comment.username == session.username %}
                 <form action="/delete_comment_from_recipe/{{ comment.id }}" method="POST">
                     <input type="submit" value="delete comment">
                 </form>
