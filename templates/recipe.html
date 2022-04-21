@@ -32,5 +32,21 @@
         <p>
             <textarea name="instructions" rows="20" cols="80" readonly>{{ instructions }}</textarea>
         </p>
+        <h3>Comments</h3>
+        {% if session.username %}
+            <p>Comment this recipe!</p>
+            <form action="/post_comment_to_recipe/{{ recipe_id }}" method="POST">
+                <p><textarea name="new_comment" rows="5" cols="80" placeholder="Write your comment here"></textarea></p>
+                <p><input type="submit" value="Send"></p>
+            </form>
+        {% else %}
+        <p>Log in to comment this recipe</p>
+        {% endif %}
+        
+        {% for comment in comments %}
+        <p>
+            <textarea name="comm" rows="5" cols="80" readonly>{{ coomment }}</textarea>
+        </p>
+        {% endfor %}
     </body>
 </html>
