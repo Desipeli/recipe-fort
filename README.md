@@ -23,6 +23,7 @@
 - Käyttäjä voi kommentoida reseptejä
 - Käyttäjä voi poistaa itse kirjoittamansa kommentit
 - Käyttäjä voi poistaa omasta reseptistään kenen tahansa kommentin
+- Käyttäjä voi tykätä/vihata toisen käyttäjän tekemää reseptiä
 
 Heroku:
 https://recipe-fort.herokuapp.com/
