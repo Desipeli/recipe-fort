@@ -44,8 +44,9 @@
         {% endif %}
         
         {% for comment in comments %}
+        <p>{{ comment.username }} {{ comment.date }}</p>
         <p>
-            <textarea name="comm" rows="5" cols="80" readonly>{{ coomment }}</textarea>
+            <textarea name="comm" rows="5" cols="80" readonly>{{ comment.text }}</textarea>
         </p>
         {% endfor %}
     </body>
