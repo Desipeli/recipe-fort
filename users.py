@@ -4,6 +4,10 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
 import string
 
+def get_user_id_from_name(username):
+    sql = "SELECT id FROM Users WHERE username=:uname"
+    return db.session.execute(sql, {"uname":username}).fetchone()[0]
+
 def login(username, password):
     sql = "SELECT password FROM Users WHERE username=:uname"
     result = db.session.execute(sql, {"uname":username})
