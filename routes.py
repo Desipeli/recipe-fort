@@ -3,7 +3,7 @@ from flask import redirect, render_template, request, session
 import meal_categories
 from datetime import datetime, date
 from werkzeug.security import check_password_hash, generate_password_hash
-import users, recipes
+import users, recipes, comments
 
 @app.route("/")
 def index():
@@ -58,7 +58,7 @@ def register_user():
 @app.route("/recipe/<string:recipe_id>")
 def recipe(recipe_id):
     result = recipes.recipe(recipe_id)
-    return render_template("recipe.html", recipe_name=result[0], ingredients=result[1], instructions=result[2], meal_type=result[3], difficulty=result[4], active_time=result[5], passive_time=result[6], time_of_creation=result[7].date(), creator=result[8])
+    return render_template("recipe.html", recipe_id=recipe_id, recipe_name=result[0], ingredients=result[1], instructions=result[2], meal_type=result[3], difficulty=result[4], active_time=result[5], passive_time=result[6], time_of_creation=result[7].date(), creator=result[8])
 
 
 @app.route("/recipe_search", methods=["POST", "GET"])
@@ -127,3 +127,10 @@ def remove_ingredient():
     units = request.form.getlist('unit')
     ingredients, amounts, units = recipes.remove_ingredient(ingredients, amounts, units)
     return render_template("write_recipe.html", meal_types=meal_categories.meal_types, ingredient_list=ingredients, amount_list=amounts, unit_list=units)
+
+@app.route("/post_comment_to_recipe/<string:recipe_id>", methods=["POST"])
+def post_comment_to_recipe(recipe_id):
+    comment = request.form['new_comment']
+    user_id = users.get_user_id_from_name(session["username"])
+    comments.post_comment_to_recipe(user_id, recipe_id, comment)
+    return redirect(request.referrer)
