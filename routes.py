@@ -1,7 +1,7 @@
 from app import app
 from flask import redirect, render_template, request, session
 import meal_categories
-from datetime import datetime
+from datetime import datetime, date
 from werkzeug.security import check_password_hash, generate_password_hash
 import users, recipes
 
@@ -58,7 +58,7 @@ def register_user():
 @app.route("/recipe/<string:recipe_id>")
 def recipe(recipe_id):
     result = recipes.recipe(recipe_id)
-    return render_template("recipe.html", recipe_name=result[0], ingredients=result[1], instructions=result[2], meal_type=result[3], difficulty=result[4], active_time=result[5], passive_time=result[6])
+    return render_template("recipe.html", recipe_name=result[0], ingredients=result[1], instructions=result[2], meal_type=result[3], difficulty=result[4], active_time=result[5], passive_time=result[6], time_of_creation=result[7].date(), creator=result[8])
 
 
 @app.route("/recipe_search", methods=["POST", "GET"])
