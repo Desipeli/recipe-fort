@@ -17,6 +17,17 @@
         {% endif %}
         <!-- Recipe section -->
         <h3>{{ recipe_name }}</h3>
+        <!-- Edit or delete recipe -->
+        {% if session.username %}
+            {% if session.username == creator %}
+                <p>
+                    <form action="/edit_recipe/{{ recipe_id }}" method="POST">
+                        <input type="submit" value="Edit/delete recipe">
+                    </form>
+                </p>
+            {% endif %}
+        {% endif %}
+        <!-- Recipe -->
         <p>{{ time_of_creation }}</p>
         <p>Posted by: {{ creator }}</p>
         <p>Category: {{ meal_type }}</p>
