@@ -5,13 +5,13 @@ import math
 import meal_categories
 
 def recipe(recipe_id):
-    sql = "SELECT I.name, I.amount, R.name FROM  Ingredients I, Recipes R WHERE R.id=:recipe_id AND I.recipe_id=:recipe_id"
+    sql = "SELECT I.name, I.amount, R.name, R.meal_type, R.difficulty, R. active_time, R.passive_time FROM  Ingredients I, Recipes R WHERE R.id=:recipe_id AND I.recipe_id=:recipe_id"
     result = db.session.execute(sql, {"recipe_id":recipe_id}).fetchall()
     sql = "SELECT I.text FROM Instructions I WHERE recipe_id=:recipe_id"
     instructions = db.session.execute(sql, {"recipe_id":recipe_id}).fetchone()
     if instructions == None:
         instructions = ["Missing instructions"]
-    return (result[0][2], result, instructions[0])
+    return (result[0][2], result, instructions[0], result[0][3], result[0][4], result[0][5], result[0][6])
     #return result, instructions
     #return render_template("recipe.html", recipe_name=result[0][2], ingredients=result, instructions=instructions[0])
 

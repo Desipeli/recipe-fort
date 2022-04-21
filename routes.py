@@ -53,10 +53,12 @@ def register_user():
         creation_message_1 = f"An error occurred during registration, try again later: "
         creation_message_2 = ""
     return render_template("register_user.html", creation_message_1=creation_message_1, creation_message_2=creation_message_2)
+
+
 @app.route("/recipe/<string:recipe_id>")
 def recipe(recipe_id):
     result = recipes.recipe(recipe_id)
-    return render_template("recipe.html", recipe_name=result[0], ingredients=result[1], instructions=result[2])
+    return render_template("recipe.html", recipe_name=result[0], ingredients=result[1], instructions=result[2], meal_type=result[3], difficulty=result[4], active_time=result[5], passive_time=result[6])
 
 
 @app.route("/recipe_search", methods=["POST", "GET"])
