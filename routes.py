@@ -136,3 +136,8 @@ def post_comment_to_recipe(recipe_id):
     user_id = users.get_user_id_from_name(session["username"])
     comments.post_comment_to_recipe(user_id, recipe_id, comment)
     return redirect(request.referrer)
+
+@app.route("/delete_comment_from_recipe/<string:comment_id>", methods=["POST"])
+def delete_comment_from_recipe(comment_id):
+    comments.delete_comment_from_recipe(comment_id)
+    return redirect(request.referrer)
