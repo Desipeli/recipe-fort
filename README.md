@@ -17,12 +17,12 @@
 - Admin voi kaiken edellä mainitun lisäksi poistaa käyttäjän tai yksittäisen reseptin/kommentin.
 
 ### Tämän hetken toiminnallisuudet
-- Luomaan käyttäjätunnuksen ja kirjautumaan sisään/ulos
-- Toistaiseksi pystyy listaamaan käyttäjät ja reseptit
-- lukemaan reseptejä
-
-sovelluksen käyttöliittymä on vielä pahasti kesken, joten toiminnallisuuksia on vielä testattava osoitteilla
+- Käyttäjä pystyy luomaan käyttäjätunnuksen ja kirjautumaan sisään/ulos
+- Voidaan hakea reseptejä useilla eri määrittelyillä
+- Käyttäjä voi luoda reseptejä
+- Käyttäjä voi kommentoida reseptejä
+- Käyttäjä voi poistaa itse kirjoittamansa kommentit
+- Käyttäjä voi poistaa omasta reseptistään kenen tahansa kommentin
 
 Heroku:
 https://recipe-fort.herokuapp.com/
-https://recipe-fort.herokuapp.com/create_account
