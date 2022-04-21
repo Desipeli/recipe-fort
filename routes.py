@@ -1,10 +1,9 @@
-import re
 from app import app
 from flask import redirect, render_template, request, session
 import meal_categories
 from datetime import datetime, date
 from werkzeug.security import check_password_hash, generate_password_hash
-import users, recipes, comments
+import users, recipes, comments, likes
 
 @app.route("/")
 def index():
@@ -60,8 +59,11 @@ def register_user():
 def recipe(recipe_id):
     result = recipes.recipe(recipe_id)
     comms = comments.get_comments_for_recipe(recipe_id)
-    return render_template("recipe.html", comments=comms, recipe_id=recipe_id, recipe_name=result[0], ingredients=result[1], instructions=result[2], meal_type=result[3], difficulty=result[4], active_time=result[5], passive_time=result[6], time_of_creation=result[7].date(), creator=result[8])
-
+    current_like_status = ""
+    likes_and_hates = ""
+    current_like_status = likes.check_current_status(recipe_id)
+    likes_and_hates = likes.likes_and_hates(recipe_id)
+    return render_template("recipe.html", likes_and_hates=likes_and_hates, current_like_status=current_like_status, comments=comms, recipe_id=recipe_id, recipe_name=result[0], ingredients=result[1], instructions=result[2], meal_type=result[3], difficulty=result[4], active_time=result[5], passive_time=result[6], time_of_creation=result[7].date(), creator=result[8])
 
 @app.route("/recipe_search", methods=["POST", "GET"])
 def recipe_search():
@@ -140,4 +142,14 @@ def post_comment_to_recipe(recipe_id):
 @app.route("/delete_comment_from_recipe/<string:comment_id>", methods=["POST"])
 def delete_comment_from_recipe(comment_id):
     comments.delete_comment_from_recipe(comment_id)
+    return redirect(request.referrer)
+
+@app.route("/like_recipe/<string:recipe_id>", methods=["POST"])
+def like_recipe(recipe_id):
+    likes.like_recipe(recipe_id)
+    return redirect(request.referrer)
+
+@app.route("/hate_recipe/<string:recipe_id>", methods=["POST"])
+def hate_recipe(recipe_id):
+    likes.hate_recipe(recipe_id)
     return redirect(request.referrer)
