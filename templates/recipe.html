@@ -15,24 +15,34 @@
             <input type="submit" value="Log in">
         </form>
         {% endif %}
-        <h2>{{ recipe_name }}</h2>
+        <!-- Recipe section -->
+        <h3>{{ recipe_name }}</h3>
         <p>{{ time_of_creation }}</p>
         <p>Posted by: {{ creator }}</p>
         <p>Category: {{ meal_type }}</p>
         <p>Difficulty: {{ difficulty }}</p>
         <p>Active time: {{ active_time }}</p>
         <p>Passive time: {{ passive_time }}</p>
-        <h3>Ingredients</h3>
+        <h4>Ingredients</h4>
         <ul>
             {% for element in ingredients %}
             <li> {{ element[0] }} {{ element[1] }}
             {% endfor %}
         </ul>
-        <h3>Instructions</h3>
+        <h4>Instructions</h4>
         <p>
             <textarea name="instructions" rows="20" cols="80" readonly>{{ instructions }}</textarea>
         </p>
-        <h3>Comments</h3>
+        <!-- Likes -->
+        <p><h5>{{ current_like_status }}</h5></p>
+        <p>
+            <form method="POST">
+                <input type="submit" name="liked_recipe" value="Like!" formaction="/like_recipe/{{ recipe_id }}">
+                <input type="submit" name="hated_recipe" value="Hate!" formaction="/hate_recipe/{{ recipe_id }}">
+            </form>
+        </p>
+        <!-- Comment section -->
+        <h4>Comments</h4>
         {% if session.username %}
             <p>Comment this recipe! (max lenght 10 000 characters</p>
             <form action="/post_comment_to_recipe/{{ recipe_id }}" method="POST">
