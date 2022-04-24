@@ -29,7 +29,11 @@
             <label for="password">Password: </label>
             <input type="password" name="password">
             <input type="submit" value="log in">
+            <a href="/create_account">or register here</a>
         </form>
+    </p>
+    <p>
+        {{ login_error }}
     </p>
     {% endif %}
     <hr>
