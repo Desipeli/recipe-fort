@@ -1,25 +1,6 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Recipe Fort</title>
-    </head>
-    <body>
-        <h2><a href="/">Recipe Fort</a></h2>
-        {% if session.username %}
-        <p>Logged in as {{ session.username }} <a href="/logout">Log out</a></p> 
-        <p><a href="/profile/{{session.username}}">View profile</a></p>
-        <p><a href="/write_recipe">Write a new recipe</a></p>
-        {% else %}
-        <form action="/create_account">
-            <input type="submit" value="New User">
-        </form>
-        <form action="/login" method="POST">
-            <p>Username: <input type="text" name="username"></p>
-            <p>Password:  <input type="password" name="password"></p>
-            <input type="submit" value="Log in">
-        </form>
-        {% endif %}
-        <p>{{ login_error }}</p>
-        <p><a href="/recipe_search">Search Recipes</a></p>
-    </body>
-</html>
+{% extends "layout.html" %}
+{% block title %}<b>Recipe fort</b>{% endblock %}
+{% block content %}
+<h2>Welcome!</h2>
+<p>Share your recipes with the world!</p>
+{% endblock %}

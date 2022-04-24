@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Recipe Fort - {% block title %}{% endblock %}</title>
+</head>
+<body>
+    <h1>Recipe Fort</h1>
+    <nav>
+        <ul>
+            <li><a href="/">Home page</a></li>
+            <li><a href="/recipe_search">Search recipes</a></li>
+            {% if session.username %}
+                <li><a href="/write_recipe">New recipe</a></li>
+                <li><a href="/profile/{{ session.username }}">View profile</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% if session.username %}
+    <p>Logged in as {{ session.username }}</p>
+    <form action="/logout" method="POST">
+        <input type="submit" value="Log out">
+    </form>
+    {% else %}
+    <p>Log in: </p>
+    <p>
+        <form action="/login" method="POST">
+            <label for="username">Username: </label>
+            <input type="text" name="username">
+            <label for="password">Password: </label>
+            <input type="password" name="password">
+            <input type="submit" value="log in">
+        </form>
+    </p>
+    {% endif %}
+    <hr>
+    {% block content %}{% endblock %}
+</body>
+</html>

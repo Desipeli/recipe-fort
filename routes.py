@@ -19,41 +19,40 @@ def login():
         return redirect(request.referrer)
     return render_template("index.html", page_header="Recipe Fort", login_error="Wrong username or password")
 
-@app.route("/logout")
+@app.route("/logout", methods=["POST"])
 def logout():
     users.logout()
     return redirect(request.referrer)
 
-@app.route("/create_account")
+@app.route("/create_account", methods=["GET", "POST"])
 def create_account():
-    return render_template("create_account.html")
+    if request.method == "GET":
+        return render_template("create_account.html")
+    else:
+        username = request.form["username"]
+        p1 = request.form["newpassword"]
+        p2 = request.form["newpassword2"]
+        login_error = ""
+        username_error = users.check_username_valid(username)
+        password_error = users.check_password_valid(p1, p2)
 
-@app.route("/register_user", methods=["POST"])
-def register_user():
-    username = request.form["username"]
-    p1 = request.form["newpassword"]
-    p2 = request.form["newpassword2"]
-    creation_error = ""
-    username_error = users.check_username_valid(username)
-    password_error = users.check_password_valid(p1, p2)
+        if username_error: login_error = username_error + ". "
+        if password_error: login_error += password_error
+        if login_error:
+            return render_template("create_account.html", login_error=login_error)
 
-    if username_error: creation_error = username_error + ". "
-    if password_error: creation_error += password_error
-    if creation_error:
-        return render_template("create_account.html", creation_error=creation_error)
+        if users.check_if_user_exists(username):
+            login_error = "User with that name already exists"
+            return render_template("create_account.html", login_error=login_error)
 
-    if users.check_if_user_exists(username):
-        creation_error = "User with that name already exists"
-        return render_template("create_account.html", creation_error=creation_error)
-
-    # No errors, create user
-    creation_message_1 = f"Account {username} created successfully. Go back to "
-    creation_message_2 = " to log in"
-    if users.register_user(username, p1) == False:
-        creation_message_1 = f"An error occurred during registration, try again later: "
-        creation_message_2 = ""
-    return render_template("register_user.html", creation_message_1=creation_message_1, creation_message_2=creation_message_2)
-
+        # No errors, create user
+        creation_error = f"Account {username} created successfully!"
+        if users.register_user(username, p1) == False:
+            login_error = f"An error occurred during registration, try again later: "
+            return render_template("create_account.html", creation_error=creation_error)
+        else:
+            users.login(username, p1)
+            return render_template("/create_account.html", creation_error=creation_error)
 
 @app.route("/recipe/<string:recipe_id>")
 def recipe(recipe_id):
@@ -87,10 +86,13 @@ def recipe_search_user(uname):
 
 @app.route("/profile/<string:uname>")
 def profile(uname):
-    if session['username'] == uname:
-        return render_template("profile.html", profile_name=uname)
+    if not session.get("username") is None:
+        if session['username'] == uname:
+            return render_template("profile.html", profile_name=uname)
+        else:
+            return render_template("profile.html")
     else:
-        return render_template("index.html", login_error=f"You must be logged in as {uname}")
+        return render_template("profile.html")
 
 @app.route("/write_recipe")
 def write_recipe():
@@ -153,3 +155,8 @@ def like_recipe(recipe_id):
 def hate_recipe(recipe_id):
     likes.hate_recipe(recipe_id)
     return redirect(request.referrer)
+
+# layouttest
+@app.route("/test")
+def test():
+    return render_template("test_site.html")

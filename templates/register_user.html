@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Recipe Fort</title>
-    </head>
-    <body>
-        <h2><a href="/">Recipe Fort</a></h2>
-        <p>{{ creation_message_1 }}<a href="/">home page</a> {{ creation_message_2 }}</p> 
-    </body>
-</html>
+{% extends "layout.html" %}
+{% block title %}<b>Registration</b>sivu{% endblock %}
+{% block content %}
+<h2>Registration</h2>
+<p>{{ creation_message_1 }}
+{% endblock %}

@@ -1,83 +1,70 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Recipe Fort</title>
-    </head>
-    <body>
-        <h2><a href="/">Recipe Fort</a></h2>
-        {% if session.username %}
-        <p>Logged in as {{ session.username }} <a href="/logout">Log out</a></p> 
-        {% else %}
-        <p>{{ login_error }}</p>
-        <form action="/login" method="POST">
-            <p>Username: <input type="text" name="username"></p>
-            <p>Password:  <input type="password" name="password"></p>
-            <input type="submit" value="Log in">
+{% extends "layout.html" %}
+{% block title %}<b>{{ recipe_name }}</b>{% endblock %}
+{% block content %}
+<h2>{{ recipe_name }}</h2>
+<!-- Recipe section -->
+<!-- Edit or delete recipe -->
+{% if session.username %}
+{% if session.username == creator %}
+    <p>
+        <form action="/edit_recipe/{{ recipe_id }}" method="POST">
+            <input type="submit" value="Edit/delete recipe">
         </form>
-        {% endif %}
-        <!-- Recipe section -->
-        <h3>{{ recipe_name }}</h3>
-        <!-- Edit or delete recipe -->
-        {% if session.username %}
-            {% if session.username == creator %}
-                <p>
-                    <form action="/edit_recipe/{{ recipe_id }}" method="POST">
-                        <input type="submit" value="Edit/delete recipe">
-                    </form>
-                </p>
-            {% endif %}
-        {% endif %}
-        <!-- Recipe -->
-        <p>{{ time_of_creation }}</p>
-        <p>Posted by: {{ creator }}</p>
-        <p>Category: {{ meal_type }}</p>
-        <p>Difficulty: {{ difficulty }}</p>
-        <p>Active time: {{ active_time }}</p>
-        <p>Passive time: {{ passive_time }}</p>
-        <h4>Ingredients</h4>
-        <ul>
-            {% for element in ingredients %}
-            <li> {{ element[0] }} {{ element[1] }}
-            {% endfor %}
-        </ul>
-        <h4>Instructions</h4>
-        <p>
-            <textarea name="instructions" rows="20" cols="80" readonly>{{ instructions }}</textarea>
-        </p>
-        <!-- Likes -->
-        <p><h5>{{ likes_and_hates }}</h5></p>
-        {% if session.username != creator %}
-        <p><h5>{{ current_like_status }}</h5></p>
-        <p>
-            <form method="POST">
-                <input type="submit" name="liked_recipe" value="Like!" formaction="/like_recipe/{{ recipe_id }}">
-                <input type="submit" name="hated_recipe" value="Hate!" formaction="/hate_recipe/{{ recipe_id }}">
-            </form>
-        </p>
-        {% endif %}
-        <!-- Comment section -->
-        <h4>Comments</h4>
-        {% if session.username %}
-            <p>Comment this recipe! (max lenght 10 000 characters</p>
-            <form action="/post_comment_to_recipe/{{ recipe_id }}" method="POST">
-                <p><textarea name="new_comment" rows="5" cols="80" placeholder="Write your comment here">{{ request.form['new_comment'] }}</textarea></p>
-                <p><input type="submit" value="Send"></p>
-            </form>
-        {% else %}
-        <p>Log in to comment this recipe</p>
-        {% endif %}
+    </p>
+{% endif %}
+{% endif %}
+<!-- Recipe -->
+<p>{{ time_of_creation }}</p>
+<p>Posted by: {{ creator }}</p>
+<p>Category: {{ meal_type }}</p>
+<p>Difficulty: {{ difficulty }}</p>
+<p>Active time: {{ active_time }}</p>
+<p>Passive time: {{ passive_time }}</p>
+<h4>Ingredients</h4>
+<ul>
+    {% for element in ingredients %}
+        <li> {{ element[0] }} {{ element[1] }}
+    {% endfor %}
+</ul>
+<h4>Instructions</h4>
+<p>
+    <textarea name="instructions" rows="20" cols="80" readonly>{{ instructions }}</textarea>
+</p>
+<!-- Likes -->
+<p><h5>{{ likes_and_hates }}</h5></p>
+{% if session.username != creator %}
+    <p><h5>{{ current_like_status }}</h5></p>
+    <p>
+    <form method="POST">
+        <input type="submit" name="liked_recipe" value="Like!" formaction="/like_recipe/{{ recipe_id }}">
+        <input type="submit" name="hated_recipe" value="Hate!" formaction="/hate_recipe/{{ recipe_id }}">
+    </form>
+    </p>
+{% endif %}
+<!-- Comment section -->
+<h4>Comments</h4>
+{% if session.username %}
+    <p>Comment this recipe! (max lenght 10 000 characters</p>
+    <form action="/post_comment_to_recipe/{{ recipe_id }}" method="POST">
+        <p><textarea name="new_comment" rows="5" cols="80" placeholder="Write your comment here">{{ request.form['new_comment'] }}</textarea></p>
+        <p><input type="submit" value="Send"></p>
+    </form>
+{% else %}
+    <p>Log in to comment this recipe</p>
+{% endif %}
+
+{% for comment in comments %}
+    <p>{{ comment.username }} {{ comment.timestamp }}
+    {% if session.username == creator or comment.username == session.username %}
+        <form action="/delete_comment_from_recipe/{{ comment.id }}" method="POST">
+            <input type="submit" value="delete comment">
+        </form>
+    {% endif %}
+    </p>
+    <p>
+        <textarea name="comm" rows="5" cols="80" readonly>{{ comment.text }}</textarea>
+    </p>
+{% endfor %}
+{% endblock %}
         
-        {% for comment in comments %}
-        <p>{{ comment.username }} {{ comment.timestamp }}
-            {% if session.username == creator or comment.username == session.username %}
-                <form action="/delete_comment_from_recipe/{{ comment.id }}" method="POST">
-                    <input type="submit" value="delete comment">
-                </form>
-            {% endif %}
-        </p>
-        <p>
-            <textarea name="comm" rows="5" cols="80" readonly>{{ comment.text }}</textarea>
-        </p>
-        {% endfor %}
-    </body>
-</html>
+

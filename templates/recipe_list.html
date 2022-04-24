@@ -1,52 +1,34 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Recipe Fort</title>
-    </head>
-    <body>
-        <h2><a href="/">Recipe Fort</a></h2>
-        {% if session.username %}
-        <p>Logged in as {{ session.username }} <a href="/logout">Log out</a></p> 
-        {% else %}
-        <form action="/create_account">
-            <input type="submit" value="New User">
-        </form>
-        <p>{{ login_error }}</p>
-        <form action="/login" method="POST">
-            <p>Username: <input type="text" name="username"></p>
-            <p>Password:  <input type="password" name="password"></p>
-            <input type="submit" value="Log in">
-        </form>
-        {% endif %}
-        <!--<h3>{{ list_header }}</h3>-->
-        <br>
-        <form action="/recipe_search" method="POST">
-            <p>Search by recipe name: <input type="text" name="recipe_name" value="{{ request.form['recipe_name'] }}"></p>
-            <p>Recipes by "username": <input type="text" name="username" value="{{ request.form['username'] }}"></p>
-            <p>Max active time (minutes): <input type="number" min="0" step="1" name="active_time" value="{{ request.form['active_time'] }}"></p>
-            <p>Max passive time (minutes): <input type="number" min="0" step="1" name="passive_time" value="{{ request.form['passive_time'] }}"></p>
-            <p>Max difficulty (0-3): <input type="number" min="0" max="3" step="1" name="difficulty" value="{{ request.form['difficulty'] }}"></p>
-            <p>Category: <select name="meal_type">
-                <option value="all">all</option>
-                {% for mt in meal_types %}
-                <option value="{{ mt }}">{{ mt }}</option>
-                {% endfor %}
-                </select>
-            </p>
-            <p>
-                <input type="radio" name="order_name" value="0" checked> A-Ö
-                <input type="radio" name="order_name" value="1"> Ö-A
-                <input type="radio" name="order_name" value="2"> newest first
-                <input type="radio" name="order_name" value="3"> oldest first
-            </p>
-            <input type="submit" value="search">
-        </form>
-        <ul>
-            {% for element in list %}
-            <li> <a href="{{ direction }}{{ element[0] }}">{{ element[1] }}</a>
-                 by 
-                <a href="/recipe_search/{{ element[2] }}"> {{ element[2] }}</a>
-            {% endfor %}
-        </ul>
-    </body>
-</html>
+{% extends "layout.html" %}
+{% block title %}<b>Search recipes</b>{% endblock %}
+{% block content %}
+<h2>Search recipes</h2>
+<br>
+<form action="/recipe_search" method="POST">
+    <p>Search by recipe name: <input type="text" name="recipe_name" value="{{ request.form['recipe_name'] }}"></p>
+    <p>Recipes by "username": <input type="text" name="username" value="{{ request.form['username'] }}"></p>
+    <p>Max active time (minutes): <input type="number" min="0" step="1" name="active_time" value="{{ request.form['active_time'] }}"></p>
+    <p>Max passive time (minutes): <input type="number" min="0" step="1" name="passive_time" value="{{ request.form['passive_time'] }}"></p>
+    <p>Max difficulty (0-3): <input type="number" min="0" max="3" step="1" name="difficulty" value="{{ request.form['difficulty'] }}"></p>
+    <p>Category: <select name="meal_type">
+        <option value="all">all</option>
+        {% for mt in meal_types %}
+        <option value="{{ mt }}">{{ mt }}</option>
+        {% endfor %}
+        </select>
+    </p>
+    <p>
+        <input type="radio" name="order_name" value="0" checked> A-Ö
+        <input type="radio" name="order_name" value="1"> Ö-A
+        <input type="radio" name="order_name" value="2"> newest first
+        <input type="radio" name="order_name" value="3"> oldest first
+    </p>
+    <input type="submit" value="search">
+</form>
+<ul>
+    {% for element in list %}
+    <li> <a href="{{ direction }}{{ element[0] }}">{{ element[1] }}</a>
+         by 
+        <a href="/recipe_search/{{ element[2] }}"> {{ element[2] }}</a>
+    {% endfor %}
+</ul>
+{% endblock %}

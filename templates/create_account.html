@@ -1,20 +1,19 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Recipe Fort</title>
-    </head>
-    <body>
-        <h2><a href="/">Recipe Fort</a></h2>
-        {% if session.username %}
-        <p>Logged in as {{ session.username }} <a href="/logout">Log out</a> to crete new user.</p> 
-        {% else %}
-        <p>{{ creation_error }}</p>
-        <form action="/register_user" method="POST">
-            <p>Choose username: <input type="text" name="username"></p>
-            <p>Enter password:  <input type="password" name="newpassword"></p>
-            <p>Password again:  <input type="password" name="newpassword2"></p>
-            <input type="submit" value="Create user">
-        </form>
-        {% endif %}
-    </body>
-</html>
+{% extends "layout.html" %}
+{% block title %}<b>New account</b>>{% endblock %}
+{% block content %}
+<h2>New account</h2>
+{% if session.username %}
+<p>{{ creation_error }}</p>
+<p>Logged in as <b>{{ session.username }}</b>. Log out to create new account.</p>
+{% else %}
+<p>{{ login_error }}</p>
+<form action="/create_account" method="POST">
+    <p>Choose username: <input type="text" name="username"></p>
+    <p>Enter password:  <input type="password" name="newpassword"></p>
+    <p>Password again:  <input type="password" name="newpassword2"></p>
+    <input type="submit" value="Create user">
+</form>
+{% endif %}
+{% endblock %}
+
+
