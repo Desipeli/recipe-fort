@@ -96,7 +96,7 @@ def profile(uname):
 
 @app.route("/write_recipe")
 def write_recipe():
-    return render_template("write_recipe.html", meal_types=meal_categories.meal_types)
+    return render_template("write_recipe.html", meal_types=meal_categories.meal_types, ingredient_list=[""], amount_list=[0], unit_list="")
 
 @app.route("/check_recipe", methods=["POST"])
 def check_recipe():
