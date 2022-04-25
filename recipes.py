@@ -69,6 +69,11 @@ def check_recipe(recipe_name, active_time, passive_time, ingredients, amounts, u
     if len(recipe_name) == 0 or len(recipe_name) > 100:
         error = True
         recipe_name_error = "Recipe name must be 1-100 characters long"
+    sql = "SELECT R.name FROM Recipes R, Users U WHERE R.name=:recipe_name AND R.user_id=U.id AND U.username=:uname"
+    result = db.session.execute(sql, {"recipe_name":recipe_name, "uname":session["username"]}).fetchone()
+    if result:
+        error = True
+        recipe_name_error = "You have already created recipe with this name"
     try:
         int(active_time)
     except:
