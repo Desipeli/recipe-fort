@@ -87,6 +87,9 @@ def check_recipe(recipe_name, active_time, passive_time, ingredients, amounts, u
     if meal_type not in meal_types:
         error = True
         meal_type_error = "Select correct category"
+    if len(ingredients) < 1:
+        error = True
+        ingredient_error = "Your recipe must have at least one ingredient"
     for i in ingredients:
         if len(i) == 0 or len(i) > 100:
             error = True
@@ -142,9 +145,13 @@ def add_ingredient(ingredients, amounts, units):
     return ingredients, amounts, units
 
 def remove_ingredient(ingredients, amounts, units):
-    if len(ingredients) > 0:
+    if len(ingredients) > 1:
         ingredients.pop()
         amounts.pop()
         units.pop()
+    else:
+        ingredients[0] = ""
+        amounts[0] = 0
+        units[0] = ""
     return ingredients, amounts, units
     
