@@ -21,7 +21,11 @@
     <p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ingredient &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; amount &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unit</b></p>
     {% for i in range(ingredient_list|length) %}
     <li>
+        {% if i == ingredient_list|length - 1 and ingredient_list|length > 1%}
+        <input name="ingredient" type="text" value="{{ingredient_list[i]}}" autofocus>
+        {% else %}
         <input name="ingredient" type="text" value="{{ingredient_list[i]}}">
+        {% endif %}
         <input name="amount" type="number" size="6" step="any" value="{{amount_list[i]}}">
         <input name="unit" type="text" value="{{unit_list[i]}}">
     </li>
