@@ -1,6 +1,7 @@
 from db import db
 from flask import session
 from werkzeug.security import check_password_hash, generate_password_hash
+import secrets
 from datetime import datetime
 import string
 
@@ -15,6 +16,7 @@ def login(username, password):
     if fetched_pw:
         if check_password_hash(fetched_pw.password, password):
             session["username"] = username
+            session["csrf_token"] = secrets.token_hex(16)
             return True
     return False
 
@@ -35,7 +37,7 @@ def check_username_valid(username):
     if len(username) < 3:
         creation_error = "Username must be at least 3 charaters long"
     for letter in username:
-        if letter not in string.ascii_letters and letter not in string.digits:
+        if letter not in string.ascii_letters + string.digits + "åäöÅÄÖ":
             creation_error = "Use only uppercase and lowercase letters and numbers in username"
     return creation_error
 
