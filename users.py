@@ -65,3 +65,25 @@ def register_user(username, password):
     except:
         return False
     return True
+
+def change_password(user_id, password_old, p1, p2):
+    sql = "SELECT password FROM Users WHERE id=:user_id"
+    stored_old_hash = db.session.execute(sql, {"user_id":user_id}).fetchone()
+    db.session.commit()
+    error = ""
+    if not check_password_hash(stored_old_hash.password, password_old):
+        error = "Old password is wrong"
+    valid = check_password_valid(p1, p2)
+    if valid != "":
+        error = valid
+    if p1 == password_old or p2 == password_old:
+        error = "Old and new passwords are identical"
+    if error:
+        return error
+    password_hash = generate_password_hash(p1)
+    sql = "UPDATE Users SET password=:p_hash WHERE id=:user_id"
+    db.session.execute(sql, {"p_hash":password_hash, "user_id":user_id})
+    db.session.commit()
+    return True
+
+

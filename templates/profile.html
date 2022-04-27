@@ -7,7 +7,8 @@
 {% block content %}
     {% if session.username %}
         {% if session.username == profile_name %}
-            <p>Your profile!</p>
+            <!--Your profile!-->
+            <p><a href="/change_password">Change password</a></p>
         {% else %}
         <p>Not your profile!</p>
         {% endif %}

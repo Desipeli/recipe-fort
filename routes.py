@@ -1,6 +1,6 @@
 from os import abort
 from app import app
-from flask import redirect, render_template, request, session
+from flask import redirect, render_template, request, request_started, session
 import meal_categories
 import users, recipes, comments, likes
 
@@ -257,3 +257,21 @@ def delete_recipe():
     else:
         message="Recipe could not be deleted"
     return render_template("index.html", message=message)
+
+@app.route("/change_password", methods=["POST", "GET"])
+def change_password():
+    if request.method == "GET":
+        return render_template("change_password.html")
+    if request.form["csrf_token"] != session["csrf_token"]:
+        abort(403)
+    user_id = users.get_user_id_from_name(session["username"])
+    print("USERID POST", user_id)
+    password_old = request.form["password_old"]
+    print("password old", password_old)
+    p1 = request.form["newpassword"]
+    p2 = request.form["newpassword2"]
+    result = users.change_password(user_id, password_old, p1, p2)
+    if result == True:
+        return render_template("profile.html", profile_name=session["username"], message="Password changed!")
+    else:
+        return render_template("change_password.html", error=result)
