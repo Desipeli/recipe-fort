@@ -4,7 +4,7 @@ from flask import redirect, render_template, request, session
 import meal_categories
 import users, recipes, comments, likes
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def index():
     return render_template("index.html")
 
@@ -61,7 +61,40 @@ def recipe(recipe_id):
     likes_and_hates = ""
     current_like_status = likes.check_current_status(recipe_id)
     likes_and_hates = likes.likes_and_hates(recipe_id)
-    return render_template("recipe.html", likes_and_hates=likes_and_hates, current_like_status=current_like_status, comments=comms, recipe_id=recipe_id, recipe_name=result[0], ingredients=result[1], instructions=result[2], meal_type=result[3], difficulty=result[4], active_time=result[5], passive_time=result[6], time_of_creation=result[7].date(), creator=result[8])
+    return render_template("recipe.html", likes_and_hates=likes_and_hates, current_like_status=current_like_status, comments=comms, recipe_id=recipe_id, recipe_name=result[0][0], ingredients=result[1], amounts=result[2], units=result[3], instructions=result[4], meal_type=result[0][1], difficulty=result[0][2], active_time=result[0][3], passive_time=result[0][4], time_of_creation=result[0][5].date(), creator=result[5])
+
+@app.route("/edit_recipe", methods=["POST"])
+def edit_recipe():
+    print("EDIT")
+    if request.form["csrf_token"] != session["csrf_token"]:
+        abort(403)
+    recipe_id = request.form["recipe_id"]
+    result = recipes.recipe(recipe_id)
+    return render_template("edit_recipe.html", recipe_id=recipe_id, recipe_name=result[0][0], instructions=result[4], difficulty=result[0][2], active_time=result[0][3], passive_time=result[0][4] ,ingredient_list=result[1], amount_list=result[2], unit_list=result[3], meal_types=meal_categories.meal_types, recipe_name_error="", active_time_error="", passive_time_error="", ingredient_error="", amount_error="", unit_error="", instructions_error="", difficulty_error="", meal_type_error="")
+
+# If recipe is modified, a new one is created and old removed from db
+@app.route("/confirm_edit", methods=["POST"]) 
+def confirm_edit():
+    if request.form["csrf_token"] != session["csrf_token"]:
+        abort(403)
+    meal_types = meal_categories.meal_types
+    recipe_id = request.form["recipe_id"]
+    recipe_name=request.form['recipe_name']
+    active_time=request.form['active_time']
+    passive_time=request.form['passive_time']
+    ingredients = request.form.getlist('ingredient')
+    amounts = request.form.getlist('amount')
+    units = request.form.getlist('unit')
+    instructions = request.form['instructions']
+    difficulty = request.form['difficulty']
+    meal_type = request.form['meal_type']
+    error = recipes.check_recipe(recipe_name, active_time, passive_time, ingredients, amounts, units, instructions, difficulty, meal_type, True)
+    if error:
+        return render_template("edit_recipe.html", recipe_id=recipe_id, recipe_name=recipe_name, instructions=instructions, difficulty=difficulty, active_time=active_time, passive_time=passive_time ,ingredient_list=ingredients, amount_list=amounts, unit_list=units, meal_types=meal_categories.meal_types, recipe_name_error=error[0], active_time_error=error[1], passive_time_error=error[2], ingredient_error=error[3], amount_error=error[4], unit_error=error[5], instructions_error=error[6], difficulty_error=error[7], meal_type_error=error[8])
+    if recipes.create_recipe(recipe_name, active_time, passive_time, ingredients, amounts, units, instructions, difficulty, meal_type):
+        recipes.delete_recipe(recipe_id, users.get_user_id_from_name(session["username"]))
+        return redirect("/")
+
 
 @app.route("/recipe_search", methods=["POST", "GET"])
 def recipe_search():
@@ -121,19 +154,63 @@ def check_recipe():
 
 @app.route("/add_ingredient", methods=["POST"])
 def add_ingredient():
+    if request.form["csrf_token"] != session["csrf_token"]:
+        abort(403)
+    ingredients = request.form.getlist('ingredient')
+    amounts = request.form.getlist('amount')
+    units = request.form.getlist('unit')
+    ingredients, amounts, units = recipes.add_ingredient(ingredients, amounts, units) 
+    return render_template("write_recipe.html", meal_types=meal_categories.meal_types, ingredient_list=ingredients, amount_list=amounts, unit_list=units)
+
+@app.route("/add_ingredient_edited", methods=["POST"])
+def add_ingredient_edited():
+    if request.form["csrf_token"] != session["csrf_token"]:
+        abort(403)
+    recipe_id = request.form["recipe_id"]
+    recipe_name=request.form['recipe_name']
+    active_time=request.form['active_time']
+    passive_time=request.form['passive_time']
+    ingredients = request.form.getlist('ingredient')
+    amounts = request.form.getlist('amount')
+    units = request.form.getlist('unit')
+    instructions = request.form['instructions']
+    difficulty = request.form['difficulty']
+    meal_type = request.form['meal_type']
     ingredients = request.form.getlist('ingredient')
     amounts = request.form.getlist('amount')
     units = request.form.getlist('unit')
     ingredients, amounts, units = recipes.add_ingredient(ingredients, amounts, units)
-    return render_template("write_recipe.html", meal_types=meal_categories.meal_types, ingredient_list=ingredients, amount_list=amounts, unit_list=units)
+    return render_template("edit_recipe.html", recipe_id=recipe_id, meal_types=meal_categories.meal_types, ingredient_list=ingredients, amount_list=amounts, unit_list=units, recipe_name=recipe_name, active_time=active_time, passive_time=passive_time, difficulty=difficulty, instructions=instructions)
 
 @app.route("/remove_ingredient", methods=["POST"])
 def remove_ingredient():
+    if request.form["csrf_token"] != session["csrf_token"]:
+        abort(403)
     ingredients = request.form.getlist('ingredient')
     amounts = request.form.getlist('amount')
     units = request.form.getlist('unit')
     ingredients, amounts, units = recipes.remove_ingredient(ingredients, amounts, units)
     return render_template("write_recipe.html", meal_types=meal_categories.meal_types, ingredient_list=ingredients, amount_list=amounts, unit_list=units)
+
+@app.route("/remove_ingredient_edited", methods=["POST"])
+def remove_ingredient_edited():
+    if request.form["csrf_token"] != session["csrf_token"]:
+        abort(403)
+    recipe_id = request.form["recipe_id"]
+    recipe_name=request.form['recipe_name']
+    active_time=request.form['active_time']
+    passive_time=request.form['passive_time']
+    ingredients = request.form.getlist('ingredient')
+    amounts = request.form.getlist('amount')
+    units = request.form.getlist('unit')
+    instructions = request.form['instructions']
+    difficulty = request.form['difficulty']
+    meal_type = request.form['meal_type']
+    ingredients = request.form.getlist('ingredient')
+    amounts = request.form.getlist('amount')
+    units = request.form.getlist('unit')
+    ingredients, amounts, units = recipes.remove_ingredient(ingredients, amounts, units)
+    return render_template("edit_recipe.html", recipe_id=recipe_id, meal_types=meal_categories.meal_types, ingredient_list=ingredients, amount_list=amounts, unit_list=units, recipe_name=recipe_name, active_time=active_time, passive_time=passive_time, difficulty=difficulty, instructions=instructions)
 
 @app.route("/post_comment_to_recipe/<string:recipe_id>", methods=["POST"])
 def post_comment_to_recipe(recipe_id):
@@ -166,7 +243,17 @@ def hate_recipe(recipe_id):
         return redirect(request.referrer)
     else:
         abort(403)
-# layouttest
-@app.route("/test")
-def test():
-    return render_template("test_site.html")
+
+@app.route("/delete_recipe", methods=["POST"])
+def delete_recipe():
+    if request.form["csrf_token"] != session["csrf_token"]:
+        abort(403)
+    recipe_id = request.form["recipe_id"]
+    user_id = users.get_user_id_from_name(session["username"])
+    success = recipes.delete_recipe(recipe_id, user_id)
+
+    if success:
+        message="Recipe deleted successfully"
+    else:
+        message="Recipe could not be deleted"
+    return render_template("index.html", message=message)
