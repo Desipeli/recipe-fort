@@ -3,32 +3,69 @@
 {% block content %}
 <h2>Search recipes</h2>
 <br>
-<form action="/recipe_search" method="POST">
-    <p>Search by recipe name: <input type="text" name="recipe_name" value="{{ request.form['recipe_name'] }}"></p>
-    <p>Recipes by "username": <input type="text" name="username" value="{{ request.form['username'] }}"></p>
-    <p>Max active time (minutes): <input type="number" min="0" step="1" name="active_time" value="{{ request.form['active_time'] }}"></p>
-    <p>Max passive time (minutes): <input type="number" min="0" step="1" name="passive_time" value="{{ request.form['passive_time'] }}"></p>
-    <p>Max difficulty (0-3): <input type="number" min="0" max="3" step="1" name="difficulty" value="{{ request.form['difficulty'] }}"></p>
-    <p>Category: <select name="meal_type">
-        <option value="all">all</option>
-        {% for mt in meal_types %}
-        <option value="{{ mt }}">{{ mt }}</option>
-        {% endfor %}
-        </select>
-    </p>
-    <p>
-        <input type="radio" name="order_name" value="0" checked> A-Ö
-        <input type="radio" name="order_name" value="1"> Ö-A
-        <input type="radio" name="order_name" value="2"> newest first
-        <input type="radio" name="order_name" value="3"> oldest first
-    </p>
-    <input type="submit" value="search">
+<form id="recipe_search_form" action="/recipe_search" method="POST">
+    <table>
+        <tbody>
+            <tr>
+                <td>Recipe Name: </td>
+                <td><input type="text" name="recipe_name" value="{{ request.form['recipe_name'] }}"></td>
+            </tr>
+            <tr>
+                <td>Username: </td>
+                <td><input type="text" name="username" value="{{ request.form['username'] }}"></td>
+            </tr>
+            <tr>
+                <td>Max active time (minutes): </td>
+                <td><input type="number" min="0" step="1" name="active_time" value="{{ request.form['active_time'] }}"></td>
+            </tr>
+            <tr>
+                <td>Max passive time (minutes): </td>
+                <td><input type="number" min="0" step="1" name="passive_time" value="{{ request.form['passive_time'] }}"></td>
+            </tr>
+            <tr>
+                <td>Max difficulty: </td>
+                <td><input type="number" min="0" max="3" step="1" name="difficulty" value="{{ request.form['difficulty'] }}"></td>
+            </tr>
+            <tr>
+                <td>Category</td>
+                <td>
+                    <select name="meal_type"><br>
+                        <option value="all">all</option>
+                        {% for mt in meal_types %}
+                        <option value="{{ mt }}">{{ mt }}</option>
+                        {% endfor %}
+                        </select>
+                </td>
+            </tr>
+            <tr>
+                <td><input type="radio" name="order_name" value="0" checked> A-Ö</td>
+            </tr><tr>
+                <td><input type="radio" name="order_name" value="1"> Ö-A</td>
+            </tr><tr>
+                <td><input type="radio" name="order_name" value="2"> newest first</td>
+            </tr><tr>
+                <td><input type="radio" name="order_name" value="3"> oldest first</td>
+            </tr>
+            <tr>
+                <td><input type="submit" value="search"></td>
+            </tr>
+        </tbody>
+    </table>
 </form>
-<ul>
-    {% for element in list %}
-    <li> <a href="{{ direction }}{{ element[0] }}">{{ element[1] }}</a>
-         by 
-        <a href="/recipe_search/{{ element[2] }}"> {{ element[2] }}</a>
-    {% endfor %}
-</ul>
+<table>
+    <thead>
+        <tr>
+            <th colspan="1">Recipe name</th>
+            <th colspan="1">Creator</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for element in list %}
+        <tr>
+            <td><a href="{{ direction }}{{ element[0] }}">{{ element[1] }}</a></td>
+            <td><a href="/recipe_search/{{ element[2] }}"> {{ element[2] }}</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}

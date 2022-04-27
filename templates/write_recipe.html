@@ -17,19 +17,28 @@
         </select>
         {{ meal_type_error }}
     </p>
-    <ul>
-    <p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ingredient &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; amount &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unit</b></p>
-    {% for i in range(ingredient_list|length) %}
-    <li>
-        {% if i == ingredient_list|length - 1 and ingredient_list|length > 1%}
-        <input name="ingredient" type="text" value="{{ingredient_list[i]}}" autofocus>
-        {% else %}
-        <input name="ingredient" type="text" value="{{ingredient_list[i]}}">
-        {% endif %}
-        <input name="amount" type="number" size="6" step="any" value="{{amount_list[i]}}">
-        <input name="unit" type="text" value="{{unit_list[i]}}">
-    </li>
-    {% endfor %}
+    <table>
+        <thead>
+            <tr>
+                <th colspan="1">Ingredient</th>
+                <th colspan="1">Amount</th>
+                <th colspan="1">Unit</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in range(ingredient_list|length) %}
+            <tr>
+                {% if i == ingredient_list|length -1 and ingredient_list|length > 1 %}
+                    <td><input name="ingredient" type="text" value="{{ingredient_list[i]}}" autofocus></td>
+                {% else %}
+                   <td><input name="ingredient" type="text" value="{{ingredient_list[i]}}"></td>
+                {% endif %}
+                    <td><input name="amount" type="number" size="6" step="any" value="{{amount_list[i]}}"></td>
+                    <td><input name="unit" type="text" value="{{unit_list[i]}}"></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     <p>{{ ingredient_error }}</p>
     <p>{{ amount_error }}</p>
     <p>{{ unit_error }}</p>
