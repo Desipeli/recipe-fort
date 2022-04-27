@@ -14,8 +14,6 @@ def recipe(recipe_id):
     if instructions == None:
         instructions = ["Missing instructions"]
     return (result[0][2], result, instructions[0], result[0][3], result[0][4], result[0][5], result[0][6], result[0][7], username.username)
-    #return result, instructions
-    #return render_template("recipe.html", recipe_name=result[0][2], ingredients=result, instructions=instructions[0])
 
 def recipe_search_GET():
     sql = "SELECT R.id, R.name, U.username FROM Recipes R, Users U WHERE R.user_id=U.id"
