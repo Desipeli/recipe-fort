@@ -1,8 +1,7 @@
+from os import abort
 from app import app
 from flask import redirect, render_template, request, session
 import meal_categories
-from datetime import datetime, date
-from werkzeug.security import check_password_hash, generate_password_hash
 import users, recipes, comments, likes
 
 @app.route("/")
@@ -100,6 +99,8 @@ def write_recipe():
 
 @app.route("/check_recipe", methods=["POST"])
 def check_recipe():
+    if request.form["csrf_token"] != session["csrf_token"]:
+        abort(403)
     meal_types = meal_categories.meal_types
     recipe_name=request.form['recipe_name']
     active_time=request.form['active_time']
@@ -112,11 +113,11 @@ def check_recipe():
     meal_type = request.form['meal_type']
     error = recipes.check_recipe(recipe_name, active_time, passive_time, ingredients, amounts, units, instructions, difficulty, meal_type)
     if error:
-        return render_template("write_recipe.html", meal_types=meal_categories.meal_types, recipe_name_error=error[0], active_time_error=error[1], passive_time_error=error[2], ingredient_error=error[3], amount_error=error[4], unit_error=error[5], instructions_error=error[6], difficulty_error=error[7], meal_type_error=error[8], ingredient_list=ingredients, amount_list=amounts, unit_list=units)
+        return render_template("write_recipe.html", meal_types=meal_types, recipe_name_error=error[0], active_time_error=error[1], passive_time_error=error[2], ingredient_error=error[3], amount_error=error[4], unit_error=error[5], instructions_error=error[6], difficulty_error=error[7], meal_type_error=error[8], ingredient_list=ingredients, amount_list=amounts, unit_list=units)
     if recipes.create_recipe(recipe_name, active_time, passive_time, ingredients, amounts, units, instructions, difficulty, meal_type):
         return redirect("/")
     else:
-        return render_template("write_recipe.html", meal_types=meal_categories.meal_types, recipe_name_error="DATABASE ERROR IN RECIPE CREATION", active_time_error=error[1], passive_time_error=error[2], ingredient_error=error[3], amount_error=error[4], unit_error=error[5], instructions_error=error[6], difficulty_error=error[7], meal_type_error=error[8], ingredient_list=ingredients, amount_list=amounts, unit_list=units)
+        return render_template("write_recipe.html", meal_types=meal_types, recipe_name_error="DATABASE ERROR IN RECIPE CREATION", active_time_error=error[1], passive_time_error=error[2], ingredient_error=error[3], amount_error=error[4], unit_error=error[5], instructions_error=error[6], difficulty_error=error[7], meal_type_error=error[8], ingredient_list=ingredients, amount_list=amounts, unit_list=units)
 
 @app.route("/add_ingredient", methods=["POST"])
 def add_ingredient():
@@ -136,6 +137,8 @@ def remove_ingredient():
 
 @app.route("/post_comment_to_recipe/<string:recipe_id>", methods=["POST"])
 def post_comment_to_recipe(recipe_id):
+    if request.form["csrf_token"] != session["csrf_token"]:
+        abort(403)
     comment = request.form['new_comment']
     user_id = users.get_user_id_from_name(session["username"])
     comments.post_comment_to_recipe(user_id, recipe_id, comment)
@@ -143,19 +146,26 @@ def post_comment_to_recipe(recipe_id):
 
 @app.route("/delete_comment_from_recipe/<string:comment_id>", methods=["POST"])
 def delete_comment_from_recipe(comment_id):
+    if request.form["csrf_token"] != session["csrf_token"]:
+        abort(403)
     comments.delete_comment_from_recipe(comment_id)
     return redirect(request.referrer)
 
 @app.route("/like_recipe/<string:recipe_id>", methods=["POST"])
 def like_recipe(recipe_id):
-    likes.like_recipe(recipe_id)
-    return redirect(request.referrer)
+    if request.form["csrf_token"] == session["csrf_token"]:
+        likes.like_recipe(recipe_id)
+        return redirect(request.referrer)
+    else:
+        abort(403)
 
 @app.route("/hate_recipe/<string:recipe_id>", methods=["POST"])
 def hate_recipe(recipe_id):
-    likes.hate_recipe(recipe_id)
-    return redirect(request.referrer)
-
+    if request.form["csrf_token"] == session["csrf_token"]:
+        likes.hate_recipe(recipe_id)
+        return redirect(request.referrer)
+    else:
+        abort(403)
 # layouttest
 @app.route("/test")
 def test():

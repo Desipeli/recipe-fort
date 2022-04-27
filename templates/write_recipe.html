@@ -45,6 +45,7 @@
     <p>{{ instructions_error }}</p>
     <br>
     <input type="submit" value="create">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>       
 {% else %}
 <p>You must be logged in to post a new recipe</p>

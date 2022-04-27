@@ -9,6 +9,7 @@
     <p>
         <form action="/edit_recipe/{{ recipe_id }}" method="POST">
             <input type="submit" value="Edit/delete recipe">
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
         </form>
     </p>
 {% endif %}
@@ -38,6 +39,7 @@
     <form method="POST">
         <input type="submit" name="liked_recipe" value="Like!" formaction="/like_recipe/{{ recipe_id }}">
         <input type="submit" name="hated_recipe" value="Hate!" formaction="/hate_recipe/{{ recipe_id }}">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     </form>
     </p>
 {% endif %}
@@ -48,6 +50,7 @@
     <form action="/post_comment_to_recipe/{{ recipe_id }}" method="POST">
         <p><textarea name="new_comment" rows="5" cols="80" placeholder="Write your comment here">{{ request.form['new_comment'] }}</textarea></p>
         <p><input type="submit" value="Send"></p>
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     </form>
 {% else %}
     <p>Log in to comment this recipe</p>
@@ -58,6 +61,7 @@
     {% if session.username == creator or comment.username == session.username %}
         <form action="/delete_comment_from_recipe/{{ comment.id }}" method="POST">
             <input type="submit" value="delete comment">
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
         </form>
     {% endif %}
     </p>
