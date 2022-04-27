@@ -72,7 +72,7 @@ def recipe_search_POST(recipe_name, username, active_time, passive_time, order_n
     result = db.session.execute(sql, {"r_name":"%"+recipe_name+"%", "active_time":active_time, "passive_time":passive_time, "username":"%"+username+"%", "difficulty":difficulty, "meal_type":meal_type}).fetchall()
     return result
 
-def check_recipe(recipe_name, active_time, passive_time, ingredients, amounts, units, instructions, difficulty, meal_type):
+def check_recipe(recipe_name, active_time, passive_time, ingredients, amounts, units, instructions, difficulty, meal_type, editing = False):
     meal_types = meal_categories.meal_types
     difficulty_error = ""
     meal_type_error = ""
@@ -89,9 +89,10 @@ def check_recipe(recipe_name, active_time, passive_time, ingredients, amounts, u
         recipe_name_error = "Recipe name must be 1-100 characters long"
     sql = "SELECT R.name FROM Recipes R, Users U WHERE R.name=:recipe_name AND R.user_id=U.id AND U.username=:uname"
     result = db.session.execute(sql, {"recipe_name":recipe_name, "uname":session["username"]}).fetchone()
-    if result:
-        error = True
-        recipe_name_error = "You have already created recipe with this name"
+    if not editing:
+        if result:
+            error = True
+            recipe_name_error = "You have already created recipe with this name"
     try:
         int(active_time)
     except:

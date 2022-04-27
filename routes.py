@@ -144,7 +144,7 @@ def check_recipe():
     instructions = request.form['instructions']
     difficulty = request.form['difficulty']
     meal_type = request.form['meal_type']
-    error = recipes.check_recipe(recipe_name, active_time, passive_time, ingredients, amounts, units, instructions, difficulty, meal_type)
+    error = recipes.check_recipe(recipe_name, active_time, passive_time, ingredients, amounts, units, instructions, difficulty, meal_type, False)
     if error:
         return render_template("write_recipe.html", meal_types=meal_types, recipe_name_error=error[0], active_time_error=error[1], passive_time_error=error[2], ingredient_error=error[3], amount_error=error[4], unit_error=error[5], instructions_error=error[6], difficulty_error=error[7], meal_type_error=error[8], ingredient_list=ingredients, amount_list=amounts, unit_list=units)
     if recipes.create_recipe(recipe_name, active_time, passive_time, ingredients, amounts, units, instructions, difficulty, meal_type):
@@ -275,3 +275,7 @@ def change_password():
         return render_template("profile.html", profile_name=session["username"], message="Password changed!")
     else:
         return render_template("change_password.html", error=result)
+
+#@app.route("/testi", methods=["GET"])
+#def testi():
+#    return render_template("test_site.html", profile_name=session["username"])
