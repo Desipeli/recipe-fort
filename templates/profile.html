@@ -9,6 +9,7 @@
         {% if session.username == profile_name %}
             <!--Your profile!-->
             <p><a href="/change_password">Change password</a></p>
+            <p><a href="/recipe_search/{{ session.username }}">Show my recipes</a></p>
         {% else %}
         <p>Not your profile!</p>
         {% endif %}
@@ -16,4 +17,3 @@
         <p>Log in!</p>
     {% endif %}
 {% endblock %}
-
