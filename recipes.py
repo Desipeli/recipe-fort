@@ -5,7 +5,7 @@ import math
 import meal_categories
 
 def recipe(recipe_id):
-    sql = "SELECT I.name, I.amount, R.name, R.meal_type, R.difficulty, R. active_time, R.passive_time, R.timestamp FROM  Ingredients I, Recipes R WHERE R.id=:recipe_id AND I.recipe_id=:recipe_id"
+    sql = "SELECT I.name, I.amount, i.unit, R.name, R.meal_type, R.difficulty, R. active_time, R.passive_time, R.timestamp FROM  Ingredients I, Recipes R WHERE R.id=:recipe_id AND I.recipe_id=:recipe_id"
     result = db.session.execute(sql, {"recipe_id":recipe_id}).fetchall()
     sql = "SELECT I.text FROM Instructions I WHERE recipe_id=:recipe_id"
     instructions = db.session.execute(sql, {"recipe_id":recipe_id}).fetchone()
@@ -13,7 +13,8 @@ def recipe(recipe_id):
     username = db.session.execute(sql, {"recipe_id":recipe_id}).fetchone()
     if instructions == None:
         instructions = ["Missing instructions"]
-    return (result[0][2], result, instructions[0], result[0][3], result[0][4], result[0][5], result[0][6], result[0][7], username.username)
+    print(result)
+    return (result[0][3], result, instructions[0], result[0][4], result[0][5], result[0][6], result[0][7], result[0][8], username.username)
 
 def recipe_search_GET():
     sql = "SELECT R.id, R.name, U.username FROM Recipes R, Users U WHERE R.user_id=U.id"
@@ -127,9 +128,10 @@ def create_recipe(recipe_name, active_time, passive_time, ingredients, amounts, 
         recipe_id = db.session.execute(sql_recipe_id, {"recipe_name":recipe_name, "user_id":user_id, "timestamp":dt}).fetchone()[0]
         for i in range(len(ingredients)):
             i_name = ingredients[i]
-            i_amount = str(amounts[i]) + " "  + units[i]
-            sql_insert_ingredients = "INSERT INTO Ingredients (recipe_id, name, amount) VALUES (:recipe_id, :name, :amount)"
-            db.session.execute(sql_insert_ingredients, {"recipe_id":recipe_id, "name":i_name, "amount":i_amount})
+            i_amount = str(amounts[i])
+            i_unit = str(units[i])
+            sql_insert_ingredients = "INSERT INTO Ingredients (recipe_id, name, amount, unit) VALUES (:recipe_id, :name, :amount, :unit)"
+            db.session.execute(sql_insert_ingredients, {"recipe_id":recipe_id, "name":i_name, "amount":i_amount, "unit":i_unit})
         sql_instructions = "INSERT INTO Instructions (recipe_id, text) VALUES (:recipe_id, :text)"
         db.session.execute(sql_instructions, {"recipe_id":recipe_id, "text":instructions})
         db.session.commit()
