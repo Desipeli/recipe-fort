@@ -5,16 +5,35 @@ import math
 import meal_categories
 
 def recipe(recipe_id):
-    sql = "SELECT I.name, I.amount, i.unit, R.name, R.meal_type, R.difficulty, R. active_time, R.passive_time, R.timestamp FROM  Ingredients I, Recipes R WHERE R.id=:recipe_id AND I.recipe_id=:recipe_id"
-    result = db.session.execute(sql, {"recipe_id":recipe_id}).fetchall()
+    sql = "SELECT R.name, R.meal_type, R.difficulty, R. active_time, R.passive_time, R.timestamp FROM Recipes R WHERE R.id=:recipe_id"
+    result = db.session.execute(sql, {"recipe_id":recipe_id}).fetchone()
+    sql = "SELECT name, amount, unit FROM Ingredients WHERE recipe_id=:recipe_id"
+    ingredients = db.session.execute(sql, {"recipe_id":recipe_id}).fetchall()
     sql = "SELECT I.text FROM Instructions I WHERE recipe_id=:recipe_id"
     instructions = db.session.execute(sql, {"recipe_id":recipe_id}).fetchone()
     sql = "SELECT U.username FROM Users U, Recipes R WHERE R.user_id=U.id AND R.id=:recipe_id"
     username = db.session.execute(sql, {"recipe_id":recipe_id}).fetchone()
     if instructions == None:
         instructions = ["Missing instructions"]
-    print(result)
-    return (result[0][3], result, instructions[0], result[0][4], result[0][5], result[0][6], result[0][7], result[0][8], username.username)
+    return (result, get_ingredients(ingredients), get_amounts(ingredients), get_units(ingredients), instructions[0], username.username)
+
+def get_ingredients(i_list):
+    ings = []
+    for i in i_list:
+        ings.append(i[0])
+    return ings
+
+def get_amounts(a_list):
+    amnts = []
+    for a in a_list:
+        amnts.append(a[1])
+    return amnts
+
+def get_units(u_list):
+    units = []
+    for u in u_list:
+        units.append(u[2])
+    return units
 
 def recipe_search_GET():
     sql = "SELECT R.id, R.name, U.username FROM Recipes R, Users U WHERE R.user_id=U.id"
@@ -138,6 +157,16 @@ def create_recipe(recipe_name, active_time, passive_time, ingredients, amounts, 
         return True
     except:
         return False
+
+def delete_recipe(recipe_id, user_id):
+    sql = "SELECT U.id FROM Users U, Recipes R WHERE R.user_id=U.id AND R.id=:recipe_id"
+    sql_user_id = db.session.execute(sql, {"recipe_id":recipe_id}).fetchone()[0]
+    if user_id != sql_user_id:
+        return False
+    sql = "DELETE FROM Recipes WHERE id=:recipe_id"
+    db.session.execute(sql, {"recipe_id":recipe_id})
+    db.session.commit()
+    return True
 
 def add_ingredient(ingredients, amounts, units):
     if ingredients == None:
