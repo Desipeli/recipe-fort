@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+{% block title %}<b>New recipe</b>{% endblock %}
+{% block content %}
+<h2>Edit recipe</h2>
+{% if session.username %}
+<form action="/confirm_edit" method="POST">
+    <p>recipe name: <input type="text" name="recipe_name" value="{{ recipe_name }}"> {{ recipe_name_error }}</p>
+    <p>active time:  <input type="number" name="active_time" value="{{ active_time }}">  {{ active_time_error }}</p>
+    <p>passive time: <input type="number" name="passive_time" value="{{ passive_time }}"> {{ passive_time_error }}</p>
+    <p>difficulty: <input type="number" min="0" max="3" step="1" name="difficulty" value="{{ difficulty }}"> {{ difficulty_error }}</p>
+    <p>
+        category
+         <select name="meal_type" selected="{{ meal_type }}">
+            {% for mt in meal_types %}
+            <option value="{{ mt }}">{{ mt }}</option>
+            {% endfor %}
+        </select>
+        {{ meal_type_error }}
+    </p>
+    <ul>
+    <p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ingredient &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; amount &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unit</b></p>
+    {% for i in range(ingredient_list|length) %}
+    <li>
+        {% if i == ingredient_list|length - 1 and ingredient_list|length > 1%}
+        <input name="ingredient" type="text" value="{{ingredient_list[i]}}" autofocus>
+        {% else %}
+        <input name="ingredient" type="text" value="{{ingredient_list[i]}}">
+        {% endif %}
+        <input name="amount" type="number" size="6" step="any" value="{{amount_list[i]}}">
+        <input name="unit" type="text" value="{{unit_list[i]}}">
+    </li>
+    {% endfor %}
+    <p>{{ ingredient_error }}</p>
+    <p>{{ amount_error }}</p>
+    <p>{{ unit_error }}</p>
+    </ul>
+    <br>
+    <button type="submit" formaction="/add_ingredient_edited">add ingredient</button>
+    <button type="submit" formaction="/remove_ingredient_edited">remove ingredient</button>
+    <br><br>
+    <p><b>Instructions</b></p>
+    <br>
+    <textarea name="instructions" rows="20" cols="80">{{ instructions }}</textarea>
+    <br>
+    <p>{{ instructions_error }}</p>
+    <br>
+    <input type="submit" value="Confirm modifications">
+    <input type="submit" formaction="/" value="Discard modifications">
+    <input type="submit" formaction="/delete_recipe" value="Delete recipe">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    <input type="hidden" name="recipe_id" value="{{ recipe_id }}">
+</form>       
+{% else %}
+<p>You must be logged in to post a new recipe</p>
+{% endif %}
+{% endblock %}

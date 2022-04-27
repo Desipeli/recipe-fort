@@ -7,8 +7,9 @@
 {% if session.username %}
 {% if session.username == creator %}
     <p>
-        <form action="/edit_recipe/{{ recipe_id }}" method="POST">
+        <form action="/edit_recipe" method="POST">
             <input type="submit" value="Edit/delete recipe">
+            <input type="hidden" name="recipe_id" value="{{ recipe_id }}">
             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
         </form>
     </p>
@@ -23,8 +24,8 @@
 <p>Passive time: {{ passive_time }}</p>
 <h4>Ingredients</h4>
 <ul>
-    {% for element in ingredients %}
-        <li> {{ element[0] }} {{ element[1] }}
+    {% for i in range(ingredients|length) %}
+        <li> {{ ingredients[i] }} {{ amounts[i] }} {{ units[i] }}
     {% endfor %}
 </ul>
 <h4>Instructions</h4>
