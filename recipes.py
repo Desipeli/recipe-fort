@@ -59,9 +59,9 @@ def recipe_search_POST(recipe_name, username, active_time, passive_time, order_n
     except:
         if passive_time == "":
             passive_time = math.inf
-    sql = "SELECT R.id, R.name, U.username FROM Recipes R, Users U WHERE R.name LIKE :r_name AND U.username LIKE :username AND U.id = R.user_id AND R.active_time<=:active_time AND R.passive_time<=:passive_time AND difficulty<=:difficulty"
+    sql = "SELECT R.id, R.name, U.username FROM Recipes R, Users U WHERE LOWER(R.name) LIKE :r_name AND LOWER(U.username) LIKE :username AND U.id = R.user_id AND R.active_time<=:active_time AND R.passive_time<=:passive_time AND difficulty<=:difficulty"
     #sql = "SELECT R.id, R.name, U.username FROM Recipes R, Users U, Ingredients I WHERE R.name LIKE :r_name AND U.username LIKE :username AND U.id = R.user_id AND R.active_time<=:active_time AND R.passive_time<=:passive_time AND difficulty<=:difficulty"
-    replacements = {"r_name":"%"+recipe_name+"%", "active_time":active_time, "passive_time":passive_time, "username":"%"+username+"%", "difficulty":difficulty, "meal_type":meal_type}
+    replacements = {"r_name":"%"+recipe_name.lower()+"%", "active_time":active_time, "passive_time":passive_time, "username":"%"+username.lower()+"%", "difficulty":difficulty, "meal_type":meal_type}
     if meal_type in meal_categories.meal_types:
         sql += " AND meal_type=:meal_type"
     #if ingredient_list != None:
@@ -98,7 +98,7 @@ def recipe_search_POST(recipe_name, username, active_time, passive_time, order_n
                 if found[i] == True:
                     continue
                 fetched = ing_result[i]
-                if ingredient == fetched[0]:
+                if ingredient.lower() == fetched[0].lower():
                     ingredients_found += 1
                     found[i] = True
                     continue 
@@ -211,9 +211,9 @@ def add_ingredient(ingredients, amounts, units):
         ingredients = []
         units = []
         amounts = []
-    ingredients.append(" ")
+    ingredients.append("")
     amounts.append(0)
-    units.append(" ")
+    units.append("")
     return ingredients, amounts, units
 
 def remove_ingredient(ingredients, amounts, units):
