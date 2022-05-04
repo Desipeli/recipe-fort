@@ -6,11 +6,23 @@
 <p>{{ creation_error }}</p>
 <p>Logged in as <b>{{ session.username }}</b>. Log out to create new account.</p>
 {% else %}
-<p>{{ login_error }}</p>
 <form action="/create_account" method="POST">
-    <p>Choose username: <input type="text" name="username"></p>
-    <p>Enter password:  <input type="password" name="newpassword"></p>
-    <p>Password again:  <input type="password" name="newpassword2"></p>
+    <table>
+        <tbody>
+            <tr>
+                <td>Choose username: </td>
+                <td><input type="text" name="username"></td>
+            </tr>
+            <tr>
+                <td>Enter password: </td>
+                <td><input type="password" name="newpassword"></td>
+            </tr>
+            <tr>
+                <td>Password again</td>
+                <td><input type="password" name="newpassword2"></td>
+            </tr>
+        </tbody>
+    </table>
     <input type="submit" value="Create user">
 </form>
 {% endif %}
