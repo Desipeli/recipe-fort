@@ -100,7 +100,7 @@ def confirm_edit():
 def recipe_search():
     if request.method == "GET":
         result = recipes.recipe_search_GET()
-        return render_template("recipe_list.html", page_header="Recipes", direction="/recipe/", list=result, meal_types=meal_categories.meal_types)
+        return render_template("recipe_list.html", direction="/recipe/", list=result, meal_types=meal_categories.meal_types, order_selected="2")
     recipe_name = request.form["recipe_name"]
     username = request.form["username"]
     active_time = request.form["active_time"]
@@ -108,13 +108,14 @@ def recipe_search():
     order_name = request.form["order_name"]
     difficulty = request.form['difficulty']
     meal_type = request.form['meal_type']
-    result = recipes.recipe_search_POST(recipe_name, username, active_time, passive_time, order_name, difficulty, meal_type)
-    return render_template("recipe_list.html", direction="/recipe/", list=result, meal_types=meal_categories.meal_types)
+    ingredient_list = request.form.getlist('ingredient')
+    result = recipes.recipe_search_POST(recipe_name, username, active_time, passive_time, order_name, difficulty, meal_type, ingredient_list)
+    return render_template("recipe_list.html", direction="/recipe/", list=result, meal_types=meal_categories.meal_types, ingredient_list=ingredient_list, order_selected=order_name)
 
 @app.route("/recipe_search/<string:uname>")
 def recipe_search_user(uname):
     result = recipes.recipe_search_user(uname)
-    return render_template("recipe_list.html", direction="/recipe/", list=result, meal_types=meal_categories.meal_types)
+    return render_template("recipe_list.html", direction="/recipe/", list=result, meal_types=meal_categories.meal_types, order_selected="2")
 
 @app.route("/profile/<string:uname>")
 def profile(uname):
@@ -276,6 +277,37 @@ def change_password():
         return render_template("profile.html", profile_name=session["username"], message="Password changed!")
     else:
         return render_template("change_password.html", error=result)
+
+@app.route("/add_ingredient_search", methods=["POST"])
+def add_ingredient_search():
+    recipe_name = request.form["recipe_name"]
+    username = request.form["username"]
+    active_time = request.form["active_time"]
+    passive_time = request.form["passive_time"]
+    order_name = request.form["order_name"]
+    difficulty = request.form['difficulty']
+    meal_type = request.form['meal_type']
+    ingredient_list = request.form.getlist('ingredient')
+    ingredient_list.append(" ")
+    result = recipes.recipe_search_POST(recipe_name, username, active_time, passive_time, order_name, difficulty, meal_type, ingredient_list)
+    return render_template("recipe_list.html", direction="/recipe/", list=result, meal_types=meal_categories.meal_types, ingredient_list=ingredient_list, order_selected=order_name)
+
+@app.route("/remove_ingredient_search", methods=["POST"])
+def remove_ingredient_search():
+    recipe_name = request.form["recipe_name"]
+    username = request.form["username"]
+    active_time = request.form["active_time"]
+    passive_time = request.form["passive_time"]
+    order_name = request.form["order_name"]
+    difficulty = request.form['difficulty']
+    meal_type = request.form['meal_type']
+    ingredient_list = request.form.getlist('ingredient')
+    if len(ingredient_list) > 0:
+        ingredient_list.pop()
+    result = recipes.recipe_search_POST(recipe_name, username, active_time, passive_time, order_name, difficulty, meal_type, ingredient_list)
+    return render_template("recipe_list.html", direction="/recipe/", list=result, meal_types=meal_categories.meal_types, ingredient_list=ingredient_list, order_selected=order_name)
+
+
 
 #@app.route("/testi", methods=["GET"])
 #def testi():
