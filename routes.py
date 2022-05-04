@@ -70,7 +70,7 @@ def edit_recipe():
         abort(403)
     recipe_id = request.form["recipe_id"]
     result = recipes.recipe(recipe_id)
-    return render_template("edit_recipe.html", recipe_id=recipe_id, recipe_name=result[0][0], instructions=result[4], difficulty=result[0][2], active_time=result[0][3], passive_time=result[0][4] ,ingredient_list=result[1], amount_list=result[2], unit_list=result[3], meal_types=meal_categories.meal_types, recipe_name_error="", active_time_error="", passive_time_error="", ingredient_error="", amount_error="", unit_error="", instructions_error="", difficulty_error="", meal_type_error="")
+    return render_template("edit_recipe.html", recipe_id=recipe_id, recipe_name=result[0][0], meal_type=result[0][1], instructions=result[4], difficulty=result[0][2], active_time=result[0][3], passive_time=result[0][4] ,ingredient_list=result[1], amount_list=result[2], unit_list=result[3], meal_types=meal_categories.meal_types, recipe_name_error="", active_time_error="", passive_time_error="", ingredient_error="", amount_error="", unit_error="", instructions_error="", difficulty_error="", meal_type_error="")
 
 # If recipe is modified, a new one is created and old removed from db
 @app.route("/confirm_edit", methods=["POST"]) 
@@ -90,7 +90,7 @@ def confirm_edit():
     meal_type = request.form['meal_type']
     error = recipes.check_recipe(recipe_name, active_time, passive_time, ingredients, amounts, units, instructions, difficulty, meal_type, True)
     if error:
-        return render_template("edit_recipe.html", recipe_id=recipe_id, recipe_name=recipe_name, instructions=instructions, difficulty=difficulty, active_time=active_time, passive_time=passive_time ,ingredient_list=ingredients, amount_list=amounts, unit_list=units, meal_types=meal_categories.meal_types, recipe_name_error=error[0], active_time_error=error[1], passive_time_error=error[2], ingredient_error=error[3], amount_error=error[4], unit_error=error[5], instructions_error=error[6], difficulty_error=error[7], meal_type_error=error[8])
+        return render_template("edit_recipe.html", meal_type=meal_type, recipe_id=recipe_id, recipe_name=recipe_name, instructions=instructions, difficulty=difficulty, active_time=active_time, passive_time=passive_time ,ingredient_list=ingredients, amount_list=amounts, unit_list=units, meal_types=meal_categories.meal_types, recipe_name_error=error[0], active_time_error=error[1], passive_time_error=error[2], ingredient_error=error[3], amount_error=error[4], unit_error=error[5], instructions_error=error[6], difficulty_error=error[7], meal_type_error=error[8])
     if recipes.create_recipe(recipe_name, active_time, passive_time, ingredients, amounts, units, instructions, difficulty, meal_type):
         recipes.delete_recipe(recipe_id, users.get_user_id_from_name(session["username"]))
         return redirect("/")
@@ -181,7 +181,7 @@ def add_ingredient_edited():
     amounts = request.form.getlist('amount')
     units = request.form.getlist('unit')
     ingredients, amounts, units = recipes.add_ingredient(ingredients, amounts, units)
-    return render_template("edit_recipe.html", recipe_id=recipe_id, meal_types=meal_categories.meal_types, ingredient_list=ingredients, amount_list=amounts, unit_list=units, recipe_name=recipe_name, active_time=active_time, passive_time=passive_time, difficulty=difficulty, instructions=instructions)
+    return render_template("edit_recipe.html", meal_type=meal_type, recipe_id=recipe_id, meal_types=meal_categories.meal_types, ingredient_list=ingredients, amount_list=amounts, unit_list=units, recipe_name=recipe_name, active_time=active_time, passive_time=passive_time, difficulty=difficulty, instructions=instructions)
 
 @app.route("/remove_ingredient", methods=["POST"])
 def remove_ingredient():
@@ -211,7 +211,7 @@ def remove_ingredient_edited():
     amounts = request.form.getlist('amount')
     units = request.form.getlist('unit')
     ingredients, amounts, units = recipes.remove_ingredient(ingredients, amounts, units)
-    return render_template("edit_recipe.html", recipe_id=recipe_id, meal_types=meal_categories.meal_types, ingredient_list=ingredients, amount_list=amounts, unit_list=units, recipe_name=recipe_name, active_time=active_time, passive_time=passive_time, difficulty=difficulty, instructions=instructions)
+    return render_template("edit_recipe.html", meal_type=meal_type, recipe_id=recipe_id, meal_types=meal_categories.meal_types, ingredient_list=ingredients, amount_list=amounts, unit_list=units, recipe_name=recipe_name, active_time=active_time, passive_time=passive_time, difficulty=difficulty, instructions=instructions)
 
 @app.route("/post_comment_to_recipe/<string:recipe_id>", methods=["POST"])
 def post_comment_to_recipe(recipe_id):

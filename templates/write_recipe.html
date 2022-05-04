@@ -25,9 +25,13 @@
         </tbody>
     </table>
         category
-         <select name="meal_type" selected="{{ request.form['meal_type'] }}">
+         <select name="meal_type">
             {% for mt in meal_types %}
-            <option value="{{ mt }}">{{ mt }}</option>
+                {% if request.form['meal_type'] == mt %}
+                    <option value="{{ mt }}" selected>{{ mt }}</option>
+                {% else %}
+                    <option value="{{ mt }}">{{ mt }}</option>
+                {% endif %}
             {% endfor %}
         </select>
         {{ meal_type_error }}
