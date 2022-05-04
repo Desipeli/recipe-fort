@@ -84,9 +84,13 @@ def check_recipe(recipe_name, active_time, passive_time, ingredients, amounts, u
     unit_error = ""
     instructions_error = ""
     error = False
-    if len(recipe_name) == 0 or len(recipe_name) > 100:
+    if len(recipe_name) > 0:
+        if recipe_name[0] == " " or recipe_name[-1] == " ":
+            error = True
+            recipe_name_error = "No spaces in the beginning or end"
+    if len(recipe_name) == 0 or len(recipe_name) > 60:
         error = True
-        recipe_name_error = "Recipe name must be 1-100 characters long"
+        recipe_name_error = "Recipe name must be 1-60 characters long"
     sql = "SELECT R.name FROM Recipes R, Users U WHERE R.name=:recipe_name AND R.user_id=U.id AND U.username=:uname"
     result = db.session.execute(sql, {"recipe_name":recipe_name, "uname":session["username"]}).fetchone()
     if not editing:
@@ -115,9 +119,9 @@ def check_recipe(recipe_name, active_time, passive_time, ingredients, amounts, u
         error = True
         ingredient_error = "Your recipe must have at least one ingredient"
     for i in ingredients:
-        if len(i) == 0 or len(i) > 100:
+        if len(i) == 0 or len(i) > 60:
             error = True
-            ingredient_error = "ingredients must be 1-100 characters long"
+            ingredient_error = "ingredients must be 1-60 characters long"
     for a in amounts:
         try:
             float(a)
@@ -125,9 +129,9 @@ def check_recipe(recipe_name, active_time, passive_time, ingredients, amounts, u
             error = True
             amount_error = "Amount must be a number"
     for u in units:
-        if len(u) > 100:
+        if len(u) > 60:
             error = True
-            unit_error = "Units must be 0-100 characters long"
+            unit_error = "Units must be 0-600 characters long"
     if len(instructions) > 10000:
         error = True
         instructions_error = "Instructions must be <= 10000 characters long"
