@@ -155,7 +155,7 @@ def create_recipe(recipe_name, active_time, passive_time, ingredients, amounts, 
         sql_instructions = "INSERT INTO Instructions (recipe_id, text) VALUES (:recipe_id, :text)"
         db.session.execute(sql_instructions, {"recipe_id":recipe_id, "text":instructions})
         db.session.commit()
-        return True
+        return recipe_id
     except:
         return False
 
