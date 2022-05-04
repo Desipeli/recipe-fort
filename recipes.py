@@ -36,17 +36,18 @@ def get_units(u_list):
     return units
 
 def recipe_search_GET():
-    sql = "SELECT R.id, R.name, U.username FROM Recipes R, Users U WHERE R.user_id=U.id"
+    sql = "SELECT R.id, R.name, U.username FROM Recipes R, Users U WHERE R.user_id=U.id ORDER BY R.timestamp DESC"
     return db.session.execute(sql).fetchall()
 
 def recipe_search_user(uname):
-    sql = "SELECT R.id, R.name, U.username FROM Recipes R, Users U WHERE R.user_id=U.id AND U.username=:uname"
+    sql = "SELECT R.id, R.name, U.username FROM Recipes R, Users U WHERE R.user_id=U.id AND U.username=:uname ORDER BY R.timestamp DESC"
     result = db.session.execute(sql, {"uname":uname})
     return result
 
-def recipe_search_POST(recipe_name, username, active_time, passive_time, order_name, difficulty, meal_type):
+def recipe_search_POST(recipe_name, username, active_time, passive_time, order_name, difficulty, meal_type, ingredient_list = None):
     if difficulty == "": difficulty = 3
     meal_type_column = "meal_type"
+    error = None
     # Check if int and if times are empty = no limit
     try:
         int(active_time)
@@ -59,8 +60,19 @@ def recipe_search_POST(recipe_name, username, active_time, passive_time, order_n
         if passive_time == "":
             passive_time = math.inf
     sql = "SELECT R.id, R.name, U.username FROM Recipes R, Users U WHERE R.name LIKE :r_name AND U.username LIKE :username AND U.id = R.user_id AND R.active_time<=:active_time AND R.passive_time<=:passive_time AND difficulty<=:difficulty"
+    #sql = "SELECT R.id, R.name, U.username FROM Recipes R, Users U, Ingredients I WHERE R.name LIKE :r_name AND U.username LIKE :username AND U.id = R.user_id AND R.active_time<=:active_time AND R.passive_time<=:passive_time AND difficulty<=:difficulty"
+    replacements = {"r_name":"%"+recipe_name+"%", "active_time":active_time, "passive_time":passive_time, "username":"%"+username+"%", "difficulty":difficulty, "meal_type":meal_type}
     if meal_type in meal_categories.meal_types:
         sql += " AND meal_type=:meal_type"
+    #if ingredient_list != None:
+    #    for i in range(len(ingredient_list)):
+    #        if len(ingredient_list[i]) == 0: 
+    #            continue
+    #        if ingredient_list[i][0] == " " or ingredient_list[-1] == " " or len(ingredient_list) > 100:
+    #            continue
+    #        sql += f" AND I.name LIKE :ing_{i}"
+    #        replacements[f"ing_{i}"] = "%"+ingredient_list[i]+"%"
+    #    sql += " AND I.recipe_id=R.id"
     if order_name == "0":
         sql += " ORDER BY R.name ASC"
     elif order_name == "1":
@@ -69,8 +81,25 @@ def recipe_search_POST(recipe_name, username, active_time, passive_time, order_n
         sql += " ORDER BY R.timestamp DESC"
     elif order_name == "3":
         sql += " ORDER BY R.timestamp ASC"
-    result = db.session.execute(sql, {"r_name":"%"+recipe_name+"%", "active_time":active_time, "passive_time":passive_time, "username":"%"+username+"%", "difficulty":difficulty, "meal_type":meal_type}).fetchall()
-    return result
+    result = db.session.execute(sql, replacements).fetchall()
+    if len(ingredient_list) == 0:
+        return result
+    final_result = []
+    for r in result:
+        ingredients_found = 0
+        sql = "SELECT name FROM Ingredients WHERE recipe_id=:recipe_id"
+        ing_result = db.session.execute(sql, {"recipe_id":r[0]}).fetchall()
+        for ingredient in ingredient_list:
+            ingredient = ingredient.strip()
+            if ingredient == "":
+                continue
+            for fetched in ing_result:
+                if ingredient == fetched[0]:
+                    ingredients_found += 1
+                    continue 
+        if ingredients_found >= len(ing_result):
+            final_result.append(r)
+    return final_result
 
 def check_recipe(recipe_name, active_time, passive_time, ingredients, amounts, units, instructions, difficulty, meal_type, editing = False):
     meal_types = meal_categories.meal_types
@@ -84,10 +113,7 @@ def check_recipe(recipe_name, active_time, passive_time, ingredients, amounts, u
     unit_error = ""
     instructions_error = ""
     error = False
-    if len(recipe_name) > 0:
-        if recipe_name[0] == " " or recipe_name[-1] == " ":
-            error = True
-            recipe_name_error = "No spaces in the beginning or end"
+    recipe_name = recipe_name.strip()
     if len(recipe_name) == 0 or len(recipe_name) > 60:
         error = True
         recipe_name_error = "Recipe name must be 1-60 characters long"
@@ -118,6 +144,8 @@ def check_recipe(recipe_name, active_time, passive_time, ingredients, amounts, u
     if len(ingredients) < 1:
         error = True
         ingredient_error = "Your recipe must have at least one ingredient"
+    for i in range(len(ingredients)):
+        ingredients[i] = ingredients[i].strip()
     for i in ingredients:
         if len(i) == 0 or len(i) > 60:
             error = True
