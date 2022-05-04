@@ -288,7 +288,7 @@ def add_ingredient_search():
     difficulty = request.form['difficulty']
     meal_type = request.form['meal_type']
     ingredient_list = request.form.getlist('ingredient')
-    ingredient_list.append(" ")
+    ingredient_list.append("")
     result = recipes.recipe_search_POST(recipe_name, username, active_time, passive_time, order_name, difficulty, meal_type, ingredient_list)
     return render_template("recipe_list.html", direction="/recipe/", list=result, meal_types=meal_categories.meal_types, ingredient_list=ingredient_list, order_selected=order_name)
 
