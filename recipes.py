@@ -89,13 +89,18 @@ def recipe_search_POST(recipe_name, username, active_time, passive_time, order_n
         ingredients_found = 0
         sql = "SELECT name FROM Ingredients WHERE recipe_id=:recipe_id"
         ing_result = db.session.execute(sql, {"recipe_id":r[0]}).fetchall()
+        found = [False for x in range(len(ing_result))]
         for ingredient in ingredient_list:
             ingredient = ingredient.strip()
             if ingredient == "":
                 continue
-            for fetched in ing_result:
+            for i in range(len(ing_result)):
+                if found[i] == True:
+                    continue
+                fetched = ing_result[i]
                 if ingredient == fetched[0]:
                     ingredients_found += 1
+                    found[i] = True
                     continue 
         if ingredients_found >= len(ing_result):
             final_result.append(r)
