@@ -38,13 +38,50 @@
                 </td>
             </tr>
             <tr>
-                <td><input type="radio" name="order_name" value="0" checked> A-Ö</td>
+                <td>
+                    {% if order_selected == "0" %}
+                        <input type="radio" name="order_name" value="0" checked> A-Ö
+                    {% else %}
+                        <input type="radio" name="order_name" value="0"> A-Ö
+                    {% endif %}
+                </td>
             </tr><tr>
-                <td><input type="radio" name="order_name" value="1"> Ö-A</td>
+                <td>
+                    {% if order_selected == "1" %}
+                        <input type="radio" name="order_name" value="1" checked> Ö-A
+                    {% else %}
+                        <input type="radio" name="order_name" value="1"> Ö-A
+                    {% endif %}
+                </td>
             </tr><tr>
-                <td><input type="radio" name="order_name" value="2"> newest first</td>
+                <td>
+                    {% if order_selected == "2" %}
+                        <input type="radio" name="order_name" value="2" checked> newest first
+                    {% else %}
+                        <input type="radio" name="order_name" value="2"> newest first
+                    {% endif %}
+                </td>
             </tr><tr>
-                <td><input type="radio" name="order_name" value="3"> oldest first</td>
+                <td>
+                    {% if order_selected == "3" %}
+                        <input type="radio" name="order_name" value="3" checked> oldest first
+                    {% else %}
+                        <input type="radio" name="order_name" value="3"> oldest first
+                    {% endif %}
+                </td>
+            </tr>
+            {% for i in range(ingredient_list|length) %}
+            <tr>
+                {% if i == ingredient_list|length -1 and ingredient_list|length > 1 %}
+                    <td><input name="ingredient" type="text" value="{{ingredient_list[i]}}" autofocus></td>
+                {% else %}
+                   <td><input name="ingredient" type="text" value="{{ingredient_list[i]}}"></td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+            <tr>
+                <td><input type="submit" formaction="/add_ingredient_search" value="add ingredient"></td>
+                <td><input type="submit" formaction="/remove_ingredient_search" value="remove ingredient"></td>
             </tr>
             <tr>
                 <td><input type="submit" value="search"></td>
