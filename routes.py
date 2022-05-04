@@ -147,8 +147,9 @@ def check_recipe():
     error = recipes.check_recipe(recipe_name, active_time, passive_time, ingredients, amounts, units, instructions, difficulty, meal_type, False)
     if error:
         return render_template("write_recipe.html", meal_types=meal_types, recipe_name_error=error[0], active_time_error=error[1], passive_time_error=error[2], ingredient_error=error[3], amount_error=error[4], unit_error=error[5], instructions_error=error[6], difficulty_error=error[7], meal_type_error=error[8], ingredient_list=ingredients, amount_list=amounts, unit_list=units)
-    if recipes.create_recipe(recipe_name, active_time, passive_time, ingredients, amounts, units, instructions, difficulty, meal_type):
-        return redirect("/")
+    recipe_id = recipes.create_recipe(recipe_name, active_time, passive_time, ingredients, amounts, units, instructions, difficulty, meal_type)
+    if recipe_id != False:
+        return redirect(f"/recipe/{recipe_id}")
     else:
         return render_template("write_recipe.html", meal_types=meal_types, recipe_name_error="DATABASE ERROR IN RECIPE CREATION", active_time_error=error[1], passive_time_error=error[2], ingredient_error=error[3], amount_error=error[4], unit_error=error[5], instructions_error=error[6], difficulty_error=error[7], meal_type_error=error[8], ingredient_list=ingredients, amount_list=amounts, unit_list=units)
 
