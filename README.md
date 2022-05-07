@@ -10,6 +10,7 @@
   - Valmistusaika
   - Vaikeustaso
   - Kategoria
+  - Raaka-aineet
 - Hakutuloksen voi järjestää
   - Aakkosjärjestykseen
   - Aikajärjestykseen
